@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">MoviesCompose</string>
+    <string name="description_img_movie">Imagen de la pelicula actual</string>
+</resources>
