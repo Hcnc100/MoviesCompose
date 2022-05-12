@@ -13,9 +13,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MoviesCompose">
         <activity
-            android:name=".MainActivity"
+            android:name=".ui.activitys.MainActivity"
             android:exported="true"
-            android:label="@string/app_name"
             android:theme="@style/Theme.MoviesCompose">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

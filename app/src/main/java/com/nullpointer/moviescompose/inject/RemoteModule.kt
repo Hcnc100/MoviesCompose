@@ -17,7 +17,7 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object RemoteModule {
 
-    @Named("baseUrl")
+    @Named("BaseUrl")
     @Provides
     fun provideBaseUrl(): String = "https://api.themoviedb.org/3/"
 
@@ -28,7 +28,7 @@ object RemoteModule {
     @Provides
     @Singleton
     fun provideRetrofit(
-        baseUrl: String,
+        @Named("BaseUrl") baseUrl: String,
         gson: Gson,
     ): Retrofit = Retrofit.Builder()
         .baseUrl(baseUrl)

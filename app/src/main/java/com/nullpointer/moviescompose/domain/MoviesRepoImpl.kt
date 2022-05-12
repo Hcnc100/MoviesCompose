@@ -9,8 +9,9 @@ import com.nullpointer.moviescompose.models.MovieDB
 import com.nullpointer.moviescompose.models.TypeMovie
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withTimeoutOrNull
+import javax.inject.Inject
 
-class MoviesRepoImpl(
+class MoviesRepoImpl @Inject constructor(
     private val moviesRemoteDataSource: MoviesRemoteDataSource,
     private val moviesLocalDataSource: MovieLocalDataSource,
 ) : MoviesRepository {

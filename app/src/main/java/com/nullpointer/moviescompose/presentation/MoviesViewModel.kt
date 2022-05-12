@@ -6,6 +6,7 @@ import com.nullpointer.moviescompose.R
 import com.nullpointer.moviescompose.core.utils.NetWorkException
 import com.nullpointer.moviescompose.core.utils.TimeOutException
 import com.nullpointer.moviescompose.domain.MoviesRepoImpl
+import com.nullpointer.moviescompose.domain.MoviesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
@@ -15,7 +16,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MoviesViewModel @Inject constructor(
-    private val moviesRepo: MoviesRepoImpl,
+    private val moviesRepo: MoviesRepository,
 ) : ViewModel() {
 
     private val _messageMovies = Channel<Int>()
