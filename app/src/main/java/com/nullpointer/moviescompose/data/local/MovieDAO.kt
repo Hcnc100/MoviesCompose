@@ -1,7 +1,6 @@
 package com.nullpointer.moviescompose.data.local
 
-import androidx.room.Dao
-import androidx.room.Query
+import androidx.room.*
 import com.nullpointer.moviescompose.models.MovieDB
 import com.nullpointer.moviescompose.models.TypeMovie
 import kotlinx.coroutines.flow.Flow
@@ -10,11 +9,17 @@ import kotlinx.coroutines.flow.Flow
 interface MovieDAO {
 
     @Query("SELECT * FROM table_movies WHERE typeMovie=:type")
-    suspend fun getTopMovieRated(type: TypeMovie = TypeMovie.TOP_RATED): Flow<List<MovieDB>>
+    fun getMoviesByType(type: TypeMovie): Flow<List<MovieDB>>
 
-    @Query("SELECT * FROM table_movies WHERE typeMovie=:type")
-    suspend fun getPopularMovie(type: TypeMovie = TypeMovie.POPULAR): Flow<List<MovieDB>>
+    @Query("DELETE FROM table_movies WHERE typeMovie=:type")
+    suspend fun deleterAllMoviesByType(type: TypeMovie = TypeMovie.TOP_RATED)
 
-    @Query("SELECT * FROM table_movies WHERE typeMovie=:type")
-    suspend fun getUpcomingMovie(type: TypeMovie = TypeMovie.UP_COMING): Flow<List<MovieDB>>
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertListMovies(listMovies: List<MovieDB>)
+
+    @Transaction
+    suspend fun updateAllMoviesByType(listMovies: List<MovieDB>, type: TypeMovie) {
+        deleterAllMoviesByType(type)
+        insertListMovies(listMovies)
+    }
 }

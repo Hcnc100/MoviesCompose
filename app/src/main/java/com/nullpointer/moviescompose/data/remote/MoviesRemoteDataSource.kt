@@ -1,6 +1,6 @@
 package com.nullpointer.moviescompose.data.remote
 
-class MoviesDataSource(
+class MoviesRemoteDataSource(
     private val moviesApiServices: MoviesApiServices,
 ) {
     suspend fun getUpComingMovies() = moviesApiServices.getUpcomingMovies()
