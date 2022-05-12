@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">MoviesCompose</string>
     <string name="description_img_movie">Imagen de la pelicula actual</string>
+    <string name="error_conecction">Verifique su conexion a intenet</string>
+    <string name="error_time_out_server">El servidor no response reintente</string>
+    <string name="error_unknow">Error desconocido</string>
 </resources>
