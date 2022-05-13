@@ -1,5 +1,7 @@
 package com.nullpointer.moviescompose.data.remote.datasource
 
+import android.content.Context
+import com.nullpointer.moviescompose.R
 import com.nullpointer.moviescompose.core.utils.InternetCheck
 import com.nullpointer.moviescompose.core.utils.NetWorkException
 import com.nullpointer.moviescompose.core.utils.TimeOutException
@@ -11,6 +13,7 @@ import kotlinx.coroutines.withTimeoutOrNull
 
 class MoviesRemoteDataSourceImpl(
     private val moviesApiServices: MoviesApiServices,
+    private val context: Context,
 ) : MoviesRemoteDataSource {
 
     private suspend fun callApiWithTimeout(
@@ -22,17 +25,23 @@ class MoviesRemoteDataSourceImpl(
     }
 
     override suspend fun getUpComingMovies(): List<MovieDB> {
-        val response = callApiWithTimeout { moviesApiServices.getUpcomingMovies() }
+        val response = callApiWithTimeout {
+                moviesApiServices.getUpcomingMovies(context.getString(R.string.language))
+        }
         return response.results.map { MovieDB.fromMovieApi(it, TypeMovie.UP_COMING) }
     }
 
     override suspend fun getPopularMovies(): List<MovieDB> {
-        val response = callApiWithTimeout { moviesApiServices.getPopularMovies() }
+        val response = callApiWithTimeout {
+            moviesApiServices.getPopularMovies(context.getString(R.string.language))
+        }
         return response.results.map { MovieDB.fromMovieApi(it, TypeMovie.POPULAR) }
     }
 
     override suspend fun getToRateMovies(): List<MovieDB> {
-        val response = callApiWithTimeout { moviesApiServices.getTopRatedMovies() }
+        val response = callApiWithTimeout {
+            moviesApiServices.getTopRatedMovies(context.getString(R.string.language))
+        }
         return response.results.map { MovieDB.fromMovieApi(it, TypeMovie.TOP_RATED) }
     }
 }

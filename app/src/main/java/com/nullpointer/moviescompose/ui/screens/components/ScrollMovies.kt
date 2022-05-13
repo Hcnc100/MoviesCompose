@@ -13,9 +13,10 @@ import com.nullpointer.moviescompose.models.MovieDB
 @Composable
 fun ScrollMovies(
     titleMovies:String,
-    listMovies:List<MovieDB>
+    listMovies:List<MovieDB>,
+    modifier: Modifier=Modifier
 ) {
-    Column {
+    Column(modifier = modifier) {
         Text(titleMovies)
         Row(modifier = Modifier.fillMaxWidth()) {
             LazyRow{

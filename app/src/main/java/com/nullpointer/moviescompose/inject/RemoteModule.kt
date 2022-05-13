@@ -1,5 +1,6 @@
 package com.nullpointer.moviescompose.inject
 
+import android.content.Context
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.nullpointer.moviescompose.data.remote.apiServices.MoviesApiServices
@@ -8,6 +9,7 @@ import com.nullpointer.moviescompose.data.remote.datasource.MoviesRemoteDataSour
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -46,6 +48,7 @@ object RemoteModule {
     @Provides
     fun provideMoviesDataSource(
         moviesApiServices: MoviesApiServices,
-    ): MoviesRemoteDataSource = MoviesRemoteDataSourceImpl(moviesApiServices)
+        @ApplicationContext context: Context
+    ): MoviesRemoteDataSource = MoviesRemoteDataSourceImpl(moviesApiServices,context)
 
 }
