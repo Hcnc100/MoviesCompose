@@ -5,4 +5,7 @@
     <string name="error_time_out_server">El servidor no response reintente</string>
     <string name="error_unknow">Error desconocido</string>
     <string name="language">es</string>
+    <string name="title_popular">Popular</string>
+    <string name="title_top_rated">Mejor Valorados</string>
+    <string name="title_up_comming">Proximos strenos</string>
 </resources>

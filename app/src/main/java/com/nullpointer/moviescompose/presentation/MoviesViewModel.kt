@@ -1,5 +1,8 @@
 package com.nullpointer.moviescompose.presentation
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nullpointer.moviescompose.R
@@ -49,28 +52,45 @@ class MoviesViewModel @Inject constructor(
         null
     )
 
+    val isLoading = combine(
+        listPopularMovies,
+        listUpComingMovies,
+        listTopRated
+    ) { listPopular, listUpComing, listTopRated ->
+        listPopular== null || listUpComing== null || listTopRated== null
+    }
+
+    var jobRequest: Job? = null
+    var isRequested by mutableStateOf(true)
+
     init {
         updateAllMovies()
     }
 
-    fun updateAllMovies() = viewModelScope.launch {
-        supervisorScope {
-            val sizePopularUpdate = async(Dispatchers.IO) { moviesRepo.updateAllPopular() }
-            val sizeTopRatedUpdate = async(Dispatchers.IO) { moviesRepo.updateAllTopRated() }
-            val sizeUpcomingUpdate = async(Dispatchers.IO) { moviesRepo.updateAllUpcoming() }
-            
-            try {
-                val size=sizePopularUpdate.await()+sizeTopRatedUpdate.await()+sizeUpcomingUpdate.await()
-                Timber.d("Result size $size")
-            }catch (e:Exception){
-                when(e){
-                    is CancellationException -> throw e
-                    is NetWorkException -> _messageMovies.trySend(R.string.error_conecction)
-                    is TimeOutException->_messageMovies.trySend(R.string.error_time_out_server)
-                    else ->{
-                        _messageMovies.trySend(R.string.error_unknow)
-                        Timber.e("Unknown error $e")
+    fun updateAllMovies() {
+        jobRequest?.cancel()
+        jobRequest = viewModelScope.launch {
+            supervisorScope {
+                try {
+                    isRequested = true
+                    val sizePopularUpdate = async(Dispatchers.IO) { moviesRepo.updateAllPopular() }
+                    val sizeTopRatedUpdate = async(Dispatchers.IO) { moviesRepo.updateAllTopRated() }
+                    val sizeUpcomingUpdate = async(Dispatchers.IO) { moviesRepo.updateAllUpcoming() }
+
+                    val size = sizePopularUpdate.await() + sizeTopRatedUpdate.await() + sizeUpcomingUpdate.await()
+                    Timber.d("Size request movies $size")
+                } catch (e: Exception) {
+                    when (e) {
+                        is CancellationException -> throw e
+                        is NetWorkException -> _messageMovies.trySend(R.string.error_conecction)
+                        is TimeOutException -> _messageMovies.trySend(R.string.error_time_out_server)
+                        else -> {
+                            _messageMovies.trySend(R.string.error_unknow)
+                            Timber.e("Unknown error api request $e")
+                        }
                     }
+                } finally {
+                    isRequested = false
                 }
             }
         }
