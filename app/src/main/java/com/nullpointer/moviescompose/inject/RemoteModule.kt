@@ -2,8 +2,9 @@ package com.nullpointer.moviescompose.inject
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import com.nullpointer.moviescompose.data.remote.MoviesApiServices
-import com.nullpointer.moviescompose.data.remote.MoviesRemoteDataSource
+import com.nullpointer.moviescompose.data.remote.apiServices.MoviesApiServices
+import com.nullpointer.moviescompose.data.remote.datasource.MoviesRemoteDataSource
+import com.nullpointer.moviescompose.data.remote.datasource.MoviesRemoteDataSourceImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -45,6 +46,6 @@ object RemoteModule {
     @Provides
     fun provideMoviesDataSource(
         moviesApiServices: MoviesApiServices,
-    ): MoviesRemoteDataSource = MoviesRemoteDataSource(moviesApiServices)
+    ): MoviesRemoteDataSource = MoviesRemoteDataSourceImpl(moviesApiServices)
 
 }

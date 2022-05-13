@@ -1,9 +1,9 @@
-package com.nullpointer.moviescompose.data.local
+package com.nullpointer.moviescompose.data.local.database
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.nullpointer.moviescompose.data.remote.Converts
+import com.nullpointer.moviescompose.data.remote.apiServices.Converts
 import com.nullpointer.moviescompose.models.MovieDB
 
 @Database(
@@ -14,5 +14,5 @@ import com.nullpointer.moviescompose.models.MovieDB
 @TypeConverters(Converts::class)
 abstract class MovieDataBase:RoomDatabase() {
 
-    abstract fun getMoviesDao():MovieDAO
+    abstract fun getMoviesDao(): MovieDAO
 }

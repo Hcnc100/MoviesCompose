@@ -1,4 +1,4 @@
-package com.nullpointer.moviescompose.data.remote
+package com.nullpointer.moviescompose.data.remote.apiServices
 
 import androidx.room.TypeConverter
 import com.nullpointer.moviescompose.models.TypeMovie

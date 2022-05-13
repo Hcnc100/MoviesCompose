@@ -6,18 +6,28 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "table_movies")
 data class MovieDB(
     val title: String,
+    val originalTitle:String,
+    val description:String,
+    val releaseDate:String,
     val imgMovie: String,
     val imgCover: String,
     val typeMovie: TypeMovie,
+    val voteAverage:Double,
     @PrimaryKey
     val id:Long?=null
 ) {
     companion object {
-        fun fromMovieApi(movieApi: MovieApi, typeMovie: TypeMovie): MovieDB =
+        private const val PREFIX_IMG="https://image.tmdb.org/t/p/w500"
+
+        fun fromMovieApi(movieApi: MovieApiResponse.Movie, typeMovie: TypeMovie): MovieDB =
             MovieDB(
-                title = movieApi.name,
-                imgCover = movieApi.urlImg,
-                imgMovie = movieApi.urlImg,
+                title = movieApi.title,
+                originalTitle = movieApi.original_title,
+                imgCover = "$PREFIX_IMG${movieApi.backdrop_path}",
+                imgMovie = "$PREFIX_IMG${movieApi.poster_path}",
+                description = movieApi.overview,
+                releaseDate = movieApi.release_date,
+                voteAverage = movieApi.vote_average,
                 typeMovie = typeMovie
             )
     }

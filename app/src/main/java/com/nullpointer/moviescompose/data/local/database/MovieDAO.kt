@@ -1,4 +1,4 @@
-package com.nullpointer.moviescompose.data.local
+package com.nullpointer.moviescompose.data.local.database
 
 import androidx.room.*
 import com.nullpointer.moviescompose.models.MovieDB
