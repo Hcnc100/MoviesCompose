@@ -3,15 +3,12 @@ package com.nullpointer.moviescompose.ui.activitys
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import com.nullpointer.moviescompose.ui.screens.MoviesScreens
+import androidx.navigation.NavGraph
+import androidx.navigation.compose.rememberNavController
+import com.nullpointer.moviescompose.ui.screens.NavGraphs
+import com.nullpointer.moviescompose.ui.screens.movies.MoviesScreens
 import com.nullpointer.moviescompose.ui.theme.MoviesComposeTheme
+import com.ramcosta.composedestinations.DestinationsNavHost
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -20,7 +17,10 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             MoviesComposeTheme {
-                MoviesScreens()
+                DestinationsNavHost(
+                    navController = rememberNavController(),
+                    navGraph = NavGraphs.root,
+                )
             }
         }
     }

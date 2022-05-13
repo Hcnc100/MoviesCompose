@@ -8,4 +8,6 @@
     <string name="title_popular">Popular</string>
     <string name="title_top_rated">Mejor Valorados</string>
     <string name="title_up_comming">Proximos strenos</string>
+    <string name="description_arrow_back">Navegar a la pantalla anterior</string>
+    <string name="title_details_movie">Detalles</string>
 </resources>

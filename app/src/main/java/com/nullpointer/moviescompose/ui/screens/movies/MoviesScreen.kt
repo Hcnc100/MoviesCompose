@@ -1,14 +1,11 @@
-package com.nullpointer.moviescompose.ui.screens
+package com.nullpointer.moviescompose.ui.screens.movies
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -17,12 +14,18 @@ import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.nullpointer.moviescompose.R
 import com.nullpointer.moviescompose.presentation.MoviesViewModel
-import com.nullpointer.moviescompose.ui.screens.components.ScrollMovies
-import com.nullpointer.moviescompose.ui.screens.components.ScrollMoviesFake
+import com.nullpointer.moviescompose.ui.screens.destinations.DetailsMovieScreenDestination
+import com.nullpointer.moviescompose.ui.screens.movies.components.ScrollMovies
+import com.nullpointer.moviescompose.ui.screens.movies.components.ScrollMoviesFake
+import com.nullpointer.moviescompose.ui.share.ToolbarBack
+import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
+@Destination(start = true)
 @Composable
 fun MoviesScreens(
     moviesViewModel: MoviesViewModel = hiltViewModel(),
+    navigator: DestinationsNavigator,
 ) {
     val statePopularMovies = moviesViewModel.listPopularMovies.collectAsState()
     val stateTopRatedMovies = moviesViewModel.listTopRated.collectAsState()
@@ -43,7 +46,7 @@ fun MoviesScreens(
     Scaffold(
         scaffoldState = scaffoldState,
         topBar = {
-            TopAppBar(title = { Text(stringResource(id = R.string.app_name)) })
+            ToolbarBack(title = stringResource(id = R.string.app_name))
         }
     ) {
         val isLoading = isLoadingMovies.value
@@ -51,32 +54,35 @@ fun MoviesScreens(
             onRefresh = moviesViewModel::updateAllMovies) {
             LazyColumn(modifier = Modifier.padding(it)) {
                 item {
-                    if (isLoading) {
-                        ScrollMoviesFake(sizeFake = 3)
-                    } else {
-                        ScrollMovies(
-                            listMovies = statePopularMovies.value!!,
-                            titleMovies = stringResource(R.string.title_popular),
-                        )
-                    }
+                    ScrollMovies(
+                        listMovies = statePopularMovies.value,
+                        titleMovies = stringResource(R.string.title_popular),
+                        isLoading = isLoading,
+                        actionClick = {
+                            navigator.navigate(DetailsMovieScreenDestination.invoke(it))
+                        }
+                    )
+
                 }
                 item {
-                    if (isLoading) {
-                        ScrollMoviesFake(sizeFake = 3)
-                    } else {
-                        ScrollMovies(
-                            listMovies = stateTopRatedMovies.value!!,
-                            titleMovies = stringResource(R.string.title_top_rated))
-                    }
+                    ScrollMovies(
+                        listMovies = stateTopRatedMovies.value,
+                        titleMovies = stringResource(R.string.title_top_rated),
+                        isLoading = isLoading,
+                        actionClick = {
+                            navigator.navigate(DetailsMovieScreenDestination.invoke(it))
+                        })
+
                 }
                 item {
-                    if (isLoading) {
-                        ScrollMoviesFake(sizeFake = 3)
-                    } else {
-                        ScrollMovies(
-                            listMovies = stateUpComingMovies.value!!,
-                            titleMovies = stringResource(R.string.title_up_comming))
-                    }
+                    ScrollMovies(
+                        listMovies = stateUpComingMovies.value,
+                        titleMovies = stringResource(R.string.title_up_comming),
+                        isLoading = isLoading,
+                        actionClick = {
+                            navigator.navigate(DetailsMovieScreenDestination.invoke(it))
+                        }
+                    )
                 }
             }
         }

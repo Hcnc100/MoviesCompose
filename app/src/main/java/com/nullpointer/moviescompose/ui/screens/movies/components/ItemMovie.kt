@@ -1,10 +1,11 @@
-package com.nullpointer.moviescompose.ui.screens.components
+package com.nullpointer.moviescompose.ui.screens.movies.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -21,9 +22,11 @@ import com.nullpointer.moviescompose.R
 import com.nullpointer.moviescompose.models.MovieDB
 
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun ItemMovie(
-    movie:MovieDB
+    movie: MovieDB,
+    actionClick: (MovieDB) -> Unit,
 ) {
     val painter = rememberImagePainter(movie.imgMovie) {
         placeholder(R.drawable.ic_movies)
@@ -34,14 +37,17 @@ fun ItemMovie(
         .height(200.dp)
         .width(150.dp)
         .padding(4.dp),
-        shape = RoundedCornerShape(10.dp)) {
+        shape = RoundedCornerShape(10.dp),
+        onClick = { actionClick(movie) }) {
         Box(contentAlignment = Alignment.Center) {
             Image(
                 painter = painter,
                 contentDescription = stringResource(R.string.description_img_movie),
                 contentScale = ContentScale.Crop
             )
-            Box(modifier = Modifier.fillMaxSize().background(Color.Black.copy(alpha = 0.2f)))
+            Box(modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black.copy(alpha = 0.2f)))
             Text(
                 text = movie.title,
                 textAlign = TextAlign.Center,

@@ -6,6 +6,16 @@ plugins {
     id 'kotlin-parcelize'
     id "com.google.devtools.ksp" version "1.6.10-1.0.4"
 }
+kotlin {
+    sourceSets {
+        debug {
+            kotlin.srcDir("build/generated/ksp/debug/kotlin")
+        }
+        release {
+            kotlin.srcDir("build/generated/ksp/release/kotlin")
+        }
+    }
+}
 
 android {
     compileSdk 31
