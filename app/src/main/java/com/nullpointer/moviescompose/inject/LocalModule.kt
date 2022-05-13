@@ -6,7 +6,6 @@ import com.nullpointer.moviescompose.data.local.database.MovieDAO
 import com.nullpointer.moviescompose.data.local.database.MovieDataBase
 import com.nullpointer.moviescompose.data.local.datasource.MovieLocalDataSource
 import com.nullpointer.moviescompose.data.local.datasource.MovieLocalDataSourceImpl
-import com.nullpointer.moviescompose.data.remote.datasource.MoviesRemoteDataSourceImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

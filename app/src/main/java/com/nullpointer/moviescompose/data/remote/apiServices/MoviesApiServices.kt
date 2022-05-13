@@ -13,6 +13,6 @@ interface MoviesApiServices {
     @GET("movie/top_rated?api_key=${BuildConfig.API_KEY_MOVIES}")
     suspend fun getTopRatedMovies(): MovieApiResponse
 
-    @GET("/movie/upcoming?api_key=${BuildConfig.API_KEY_MOVIES}")
+    @GET("movie/upcoming?api_key=${BuildConfig.API_KEY_MOVIES}")
     suspend fun getUpcomingMovies(): MovieApiResponse
 }

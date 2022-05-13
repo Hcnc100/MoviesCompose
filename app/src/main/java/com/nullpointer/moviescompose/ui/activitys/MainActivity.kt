@@ -10,6 +10,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.nullpointer.moviescompose.ui.screens.MoviesScreens
 import com.nullpointer.moviescompose.ui.theme.MoviesComposeTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -19,25 +20,9 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             MoviesComposeTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colors.background) {
-                    Greeting("Android")
-                }
+                MoviesScreens()
             }
         }
     }
 }
 
-@Composable
-fun Greeting(name: String) {
-    Text(text = "Hello $name!")
-}
-
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    MoviesComposeTheme {
-        Greeting("Android")
-    }
-}
