@@ -4,7 +4,10 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="../../../../../layout/compose-model-1652361677560.xml" value="0.5992779783393501" />
+        <entry key="app/src/main/res/drawable/circle_background.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/ic_broken_image.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/ic_movie.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/splash_background.xml" value="0.1" />
       </map>
     </option>
   </component>
