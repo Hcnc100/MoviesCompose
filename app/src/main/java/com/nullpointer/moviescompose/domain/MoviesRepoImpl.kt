@@ -1,5 +1,6 @@
 package com.nullpointer.moviescompose.domain
 
+import com.nullpointer.moviescompose.core.constants.Constants
 import com.nullpointer.moviescompose.data.local.datasource.MovieLocalDataSource
 import com.nullpointer.moviescompose.data.remote.datasource.MoviesRemoteDataSource
 import com.nullpointer.moviescompose.models.Cast
@@ -37,7 +38,10 @@ class MoviesRepoImpl @Inject constructor(
     override suspend fun getCastFromMovie(idMovie: Long): List<Cast> =
         moviesRemoteDataSource.getCreditsToMovie(idMovie)
 
-    override suspend fun getMoviesForSearch(query: String): List<MovieApiResponse.Movie> =
-        moviesRemoteDataSource.getMoviesForSearch(query)
+    override suspend fun getMoviesForSearch(query: String): List<MovieApiResponse.Movie> {
+        return moviesRemoteDataSource.getMoviesForSearch(query).map {
+            it.copy(poster_path = "${Constants.PREFIX_IMG_URL}${it.poster_path}")
+        }
+    }
 
 }

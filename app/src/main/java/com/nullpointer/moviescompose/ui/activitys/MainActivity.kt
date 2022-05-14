@@ -20,7 +20,6 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private val moviesViewModel:MoviesViewModel by viewModels()
     private val castViewModel:CastViewModel by viewModels()
-    private val searchViewModel:SearchViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,7 +31,6 @@ class MainActivity : ComponentActivity() {
                     dependenciesContainerBuilder = {
                         dependency(moviesViewModel)
                         dependency(castViewModel)
-                        dependency(searchViewModel)
                     }
                 )
             }
