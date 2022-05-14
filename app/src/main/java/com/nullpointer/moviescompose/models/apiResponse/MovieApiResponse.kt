@@ -1,4 +1,4 @@
-package com.nullpointer.moviescompose.models
+package com.nullpointer.moviescompose.models.apiResponse
 
 data class MovieApiResponse(
     val page: Int,

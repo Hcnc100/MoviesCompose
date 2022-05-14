@@ -1,9 +1,10 @@
 package com.nullpointer.moviescompose.data.remote.apiServices
 
 import com.nullpointer.moviescompose.BuildConfig
-import com.nullpointer.moviescompose.models.MovieApiResponse
-import org.intellij.lang.annotations.Language
+import com.nullpointer.moviescompose.models.apiResponse.CastApiResponse
+import com.nullpointer.moviescompose.models.apiResponse.MovieApiResponse
 import retrofit2.http.GET
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 
@@ -23,4 +24,8 @@ interface MoviesApiServices {
     suspend fun getUpcomingMovies(
         @Query("language") language: String
     ): MovieApiResponse
+    @GET("movie/{idMovie}/credits?api_key=${BuildConfig.API_KEY_MOVIES}")
+    suspend fun getCredits(
+        @Path("idMovie") idMovie:Long
+    ): CastApiResponse
 }

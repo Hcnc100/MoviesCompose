@@ -6,9 +6,10 @@ import com.nullpointer.moviescompose.core.utils.InternetCheck
 import com.nullpointer.moviescompose.core.utils.NetWorkException
 import com.nullpointer.moviescompose.core.utils.TimeOutException
 import com.nullpointer.moviescompose.data.remote.apiServices.MoviesApiServices
-import com.nullpointer.moviescompose.models.MovieApiResponse
+import com.nullpointer.moviescompose.models.Cast
 import com.nullpointer.moviescompose.models.MovieDB
 import com.nullpointer.moviescompose.models.TypeMovie
+import com.nullpointer.moviescompose.models.apiResponse.MovieApiResponse
 import kotlinx.coroutines.withTimeoutOrNull
 
 class MoviesRemoteDataSourceImpl(
@@ -43,5 +44,13 @@ class MoviesRemoteDataSourceImpl(
             moviesApiServices.getTopRatedMovies(context.getString(R.string.language))
         }
         return response.results.map { MovieDB.fromMovieApi(it, TypeMovie.TOP_RATED) }
+    }
+
+    override suspend fun getCreditsToMovie(idMovie:Long): List<Cast> {
+        if (!InternetCheck.isNetworkAvailable()) throw NetWorkException()
+        val response= withTimeoutOrNull(3_000){
+            moviesApiServices.getCredits(idMovie)
+        }?:throw TimeOutException()
+        return response.cast.map(Cast::fromCastApi)
     }
 }

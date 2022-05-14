@@ -2,6 +2,7 @@ package com.nullpointer.moviescompose.domain
 
 import com.nullpointer.moviescompose.data.local.datasource.MovieLocalDataSource
 import com.nullpointer.moviescompose.data.remote.datasource.MoviesRemoteDataSource
+import com.nullpointer.moviescompose.models.Cast
 import com.nullpointer.moviescompose.models.MovieDB
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
@@ -31,4 +32,7 @@ class MoviesRepoImpl @Inject constructor(
         if(listTopRated.isNotEmpty()) moviesLocalDataSource.updateAllTopRated(listTopRated)
         return listTopRated.size
     }
+
+    override suspend fun getCastFromMovie(idMovie: Long): List<Cast> =
+        moviesRemoteDataSource.getCreditsToMovie(idMovie)
 }

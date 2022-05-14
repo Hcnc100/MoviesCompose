@@ -8,7 +8,6 @@ import androidx.lifecycle.viewModelScope
 import com.nullpointer.moviescompose.R
 import com.nullpointer.moviescompose.core.utils.NetWorkException
 import com.nullpointer.moviescompose.core.utils.TimeOutException
-import com.nullpointer.moviescompose.domain.MoviesRepoImpl
 import com.nullpointer.moviescompose.domain.MoviesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
@@ -57,7 +56,7 @@ class MoviesViewModel @Inject constructor(
         listUpComingMovies,
         listTopRated
     ) { listPopular, listUpComing, listTopRated ->
-        listPopular== null || listUpComing== null || listTopRated== null
+        listPopular == null || listUpComing == null || listTopRated == null
     }
 
     var jobRequest: Job? = null
@@ -74,10 +73,13 @@ class MoviesViewModel @Inject constructor(
                 try {
                     isRequested = true
                     val sizePopularUpdate = async(Dispatchers.IO) { moviesRepo.updateAllPopular() }
-                    val sizeTopRatedUpdate = async(Dispatchers.IO) { moviesRepo.updateAllTopRated() }
-                    val sizeUpcomingUpdate = async(Dispatchers.IO) { moviesRepo.updateAllUpcoming() }
+                    val sizeTopRatedUpdate =
+                        async(Dispatchers.IO) { moviesRepo.updateAllTopRated() }
+                    val sizeUpcomingUpdate =
+                        async(Dispatchers.IO) { moviesRepo.updateAllUpcoming() }
 
-                    val size = sizePopularUpdate.await() + sizeTopRatedUpdate.await() + sizeUpcomingUpdate.await()
+                    val size =
+                        sizePopularUpdate.await() + sizeTopRatedUpdate.await() + sizeUpcomingUpdate.await()
                     Timber.d("Size request movies $size")
                 } catch (e: Exception) {
                     when (e) {

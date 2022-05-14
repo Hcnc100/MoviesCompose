@@ -1,7 +1,11 @@
 package com.nullpointer.moviescompose.ui.screens.movies
 
+import androidx.compose.foundation.gestures.scrollable
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -24,7 +28,7 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 @Destination(start = true)
 @Composable
 fun MoviesScreens(
-    moviesViewModel: MoviesViewModel = hiltViewModel(),
+    moviesViewModel: MoviesViewModel,
     navigator: DestinationsNavigator,
 ) {
     val statePopularMovies = moviesViewModel.listPopularMovies.collectAsState()
@@ -52,38 +56,32 @@ fun MoviesScreens(
         val isLoading = isLoadingMovies.value
         SwipeRefresh(state = rememberSwipeRefreshState(moviesViewModel.isRequested),
             onRefresh = moviesViewModel::updateAllMovies) {
-            LazyColumn(modifier = Modifier.padding(it)) {
-                item {
-                    ScrollMovies(
-                        listMovies = statePopularMovies.value,
-                        titleMovies = stringResource(R.string.title_popular),
-                        isLoading = isLoading,
-                        actionClick = {
-                            navigator.navigate(DetailsMovieScreenDestination.invoke(it))
-                        }
-                    )
-
-                }
-                item {
-                    ScrollMovies(
-                        listMovies = stateTopRatedMovies.value,
-                        titleMovies = stringResource(R.string.title_top_rated),
-                        isLoading = isLoading,
-                        actionClick = {
-                            navigator.navigate(DetailsMovieScreenDestination.invoke(it))
-                        })
-
-                }
-                item {
-                    ScrollMovies(
-                        listMovies = stateUpComingMovies.value,
-                        titleMovies = stringResource(R.string.title_up_comming),
-                        isLoading = isLoading,
-                        actionClick = {
-                            navigator.navigate(DetailsMovieScreenDestination.invoke(it))
-                        }
-                    )
-                }
+            Column(modifier = Modifier
+                .padding(it)
+                .verticalScroll(rememberScrollState())) {
+                ScrollMovies(
+                    listMovies = statePopularMovies.value,
+                    titleMovies = stringResource(R.string.title_popular),
+                    isLoading = isLoading,
+                    actionClick = {
+                        navigator.navigate(DetailsMovieScreenDestination.invoke(it))
+                    }
+                )
+                ScrollMovies(
+                    listMovies = stateTopRatedMovies.value,
+                    titleMovies = stringResource(R.string.title_top_rated),
+                    isLoading = isLoading,
+                    actionClick = {
+                        navigator.navigate(DetailsMovieScreenDestination.invoke(it))
+                    })
+                ScrollMovies(
+                    listMovies = stateUpComingMovies.value,
+                    titleMovies = stringResource(R.string.title_up_comming),
+                    isLoading = isLoading,
+                    actionClick = {
+                        navigator.navigate(DetailsMovieScreenDestination.invoke(it))
+                    }
+                )
             }
         }
     }

@@ -3,6 +3,8 @@ package com.nullpointer.moviescompose.models
 import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.nullpointer.moviescompose.core.constants.Constants.PREFIX_IMG_URL
+import com.nullpointer.moviescompose.models.apiResponse.MovieApiResponse
 import kotlinx.parcelize.Parcelize
 import java.text.SimpleDateFormat
 import java.util.*
@@ -22,7 +24,6 @@ data class MovieDB(
     val id:Long?=null
 ) : Parcelable {
     companion object {
-        private const val PREFIX_IMG="https://image.tmdb.org/t/p/w500"
 
         fun fromMovieApi(movieApi: MovieApiResponse.Movie, typeMovie: TypeMovie): MovieDB{
             val simpleFormat=SimpleDateFormat("yyyy-mm-dd", Locale.getDefault())
@@ -30,8 +31,8 @@ data class MovieDB(
            return MovieDB(
                 title = movieApi.title,
                 originalTitle = movieApi.original_title,
-                imgCover = "$PREFIX_IMG${movieApi.backdrop_path}",
-                imgMovie = "$PREFIX_IMG${movieApi.poster_path}",
+                imgCover = "$PREFIX_IMG_URL${movieApi.backdrop_path}",
+                imgMovie = "$PREFIX_IMG_URL${movieApi.poster_path}",
                 description = movieApi.overview,
                 releaseDate = date?.time,
                 voteAverage = movieApi.vote_average,
