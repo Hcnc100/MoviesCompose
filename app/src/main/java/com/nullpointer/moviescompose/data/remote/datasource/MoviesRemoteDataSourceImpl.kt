@@ -27,7 +27,7 @@ class MoviesRemoteDataSourceImpl(
 
     override suspend fun getUpComingMovies(): List<MovieDB> {
         val response = callApiWithTimeout {
-                moviesApiServices.getUpcomingMovies(context.getString(R.string.language))
+            moviesApiServices.getUpcomingMovies(context.getString(R.string.language))
         }
         return response.results.map { MovieDB.fromMovieApi(it, TypeMovie.UP_COMING) }
     }
@@ -46,11 +46,22 @@ class MoviesRemoteDataSourceImpl(
         return response.results.map { MovieDB.fromMovieApi(it, TypeMovie.TOP_RATED) }
     }
 
-    override suspend fun getCreditsToMovie(idMovie:Long): List<Cast> {
+    override suspend fun getCreditsToMovie(idMovie: Long): List<Cast> {
         if (!InternetCheck.isNetworkAvailable()) throw NetWorkException()
-        val response= withTimeoutOrNull(3_000){
+        val response = withTimeoutOrNull(3_000) {
             moviesApiServices.getCredits(idMovie)
-        }?:throw TimeOutException()
+        } ?: throw TimeOutException()
         return response.cast.map(Cast::fromCastApi)
+    }
+
+    override suspend fun getMoviesForSearch(query: String): List<MovieApiResponse.Movie> {
+        if (!InternetCheck.isNetworkAvailable()) throw NetWorkException()
+        return withTimeoutOrNull(3_000) {
+            moviesApiServices.getResultForSearch(
+                language = context.getString(R.string.language),
+                page = 1,
+                includeAdult = true,
+                query = query).results
+        } ?: throw TimeOutException()
     }
 }

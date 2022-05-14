@@ -19,6 +19,7 @@ import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.nullpointer.moviescompose.R
 import com.nullpointer.moviescompose.presentation.MoviesViewModel
 import com.nullpointer.moviescompose.ui.screens.destinations.DetailsMovieScreenDestination
+import com.nullpointer.moviescompose.ui.screens.destinations.SearchScreenDestination
 import com.nullpointer.moviescompose.ui.screens.movies.components.ScrollMovies
 import com.nullpointer.moviescompose.ui.screens.movies.components.ScrollMoviesFake
 import com.nullpointer.moviescompose.ui.share.ToolbarBack
@@ -50,7 +51,9 @@ fun MoviesScreens(
     Scaffold(
         scaffoldState = scaffoldState,
         topBar = {
-            ToolbarBack(title = stringResource(id = R.string.app_name))
+            ToolbarBack(title = stringResource(id = R.string.app_name), actionSearch = {
+                navigator.navigate(SearchScreenDestination)
+            })
         }
     ) {
         val isLoading = isLoadingMovies.value

@@ -1,21 +1,16 @@
 package com.nullpointer.moviescompose.ui.screens.details
 
-import android.widget.Space
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.outlined.Star
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -26,7 +21,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberImagePainter
 import com.nullpointer.moviescompose.R
 import com.nullpointer.moviescompose.core.utils.convertTime
@@ -48,13 +42,14 @@ fun DetailsMovieScreen(
 
     val scaffoldState = rememberScaffoldState()
     val messageCast = castViewModel.messageCast
-    val context= LocalContext.current
+    val context = LocalContext.current
+    val stateListCast = castViewModel.listCastMovie.collectAsState()
 
     LaunchedEffect(key1 = Unit) {
         castViewModel.getCastFromMovie(movie.id!!)
     }
     LaunchedEffect(key1 = Unit) {
-        messageCast.collect{
+        messageCast.collect {
             scaffoldState.snackbarHostState.showSnackbar(context.getString(it))
         }
     }
@@ -66,6 +61,8 @@ fun DetailsMovieScreen(
                 actionBack = navigator::popBackStack)
         }
     ) {
+        val listCast = stateListCast.value
+
         Column(modifier = Modifier
             .padding(it)
             .verticalScroll(rememberScrollState())) {
@@ -84,8 +81,8 @@ fun DetailsMovieScreen(
                     modifier = Modifier.padding(vertical = 5.dp, horizontal = 10.dp),
                     style = MaterialTheme.typography.h6)
                 LazyRow {
-                    items(castViewModel.listCastMovie.size) { index ->
-                        ItemCast(cast = castViewModel.listCastMovie[index])
+                    items(listCast.size) { index ->
+                        ItemCast(listCast[index])
                     }
                 }
             }

@@ -8,6 +8,7 @@ import androidx.navigation.NavGraph
 import androidx.navigation.compose.rememberNavController
 import com.nullpointer.moviescompose.presentation.CastViewModel
 import com.nullpointer.moviescompose.presentation.MoviesViewModel
+import com.nullpointer.moviescompose.presentation.SearchViewModel
 import com.nullpointer.moviescompose.ui.screens.NavGraphs
 import com.nullpointer.moviescompose.ui.screens.movies.MoviesScreens
 import com.nullpointer.moviescompose.ui.theme.MoviesComposeTheme
@@ -19,6 +20,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private val moviesViewModel:MoviesViewModel by viewModels()
     private val castViewModel:CastViewModel by viewModels()
+    private val searchViewModel:SearchViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,6 +32,7 @@ class MainActivity : ComponentActivity() {
                     dependenciesContainerBuilder = {
                         dependency(moviesViewModel)
                         dependency(castViewModel)
+                        dependency(searchViewModel)
                     }
                 )
             }

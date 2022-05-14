@@ -24,8 +24,17 @@ interface MoviesApiServices {
     suspend fun getUpcomingMovies(
         @Query("language") language: String
     ): MovieApiResponse
+
     @GET("movie/{idMovie}/credits?api_key=${BuildConfig.API_KEY_MOVIES}")
     suspend fun getCredits(
         @Path("idMovie") idMovie:Long
     ): CastApiResponse
+
+    @GET("search/movie?api_key=${BuildConfig.API_KEY_MOVIES}")
+    suspend fun getResultForSearch(
+        @Query("language") language: String,
+        @Query("page") page:Int,
+        @Query("include_adult") includeAdult: Boolean,
+        @Query("query") query: String,
+    ):MovieApiResponse
 }

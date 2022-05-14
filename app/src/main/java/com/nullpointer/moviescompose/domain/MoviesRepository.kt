@@ -2,6 +2,7 @@ package com.nullpointer.moviescompose.domain
 
 import com.nullpointer.moviescompose.models.Cast
 import com.nullpointer.moviescompose.models.MovieDB
+import com.nullpointer.moviescompose.models.apiResponse.MovieApiResponse
 import kotlinx.coroutines.flow.Flow
 
 interface MoviesRepository {
@@ -13,4 +14,5 @@ interface MoviesRepository {
     suspend fun updateAllUpcoming():Int
     suspend fun updateAllTopRated():Int
     suspend fun getCastFromMovie(idMovie:Long):List<Cast>
+    suspend fun getMoviesForSearch(query:String):List<MovieApiResponse.Movie>
 }

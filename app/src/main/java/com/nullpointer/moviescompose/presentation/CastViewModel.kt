@@ -16,6 +16,9 @@ import com.nullpointer.moviescompose.models.Cast
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import timber.log.Timber
 import javax.inject.Inject
@@ -23,26 +26,28 @@ import javax.inject.Inject
 @HiltViewModel
 class CastViewModel @Inject constructor(
     private val moviesRepo: MoviesRepository,
-    savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
     private val _messageCast = Channel<Int>()
     val messageCast = _messageCast.receiveAsFlow()
 
-    var jobRequestCast: Job? = null
+    private var jobRequestCast: Job? = null
     var isRequestedCast by mutableStateOf(true)
-    var listCastMovie: List<Cast> by SavableComposeState(savedStateHandle, "LIST_CAST", emptyList())
-    private var idMovieCast: Long by SavableProperty(savedStateHandle, "KEY_ID_MOVIE", -1)
+
+    private val _listCastMovie = MutableStateFlow<List<Cast>>(emptyList())
+    val listCastMovie = _listCastMovie.asStateFlow()
+
+    private var idMovieCast: Long = -1
 
 
     fun getCastFromMovie(idMovie: Long) {
         jobRequestCast?.cancel()
-        if(idMovie!=idMovieCast){
+        if (idMovie != idMovieCast || idMovie == idMovieCast && _listCastMovie.value.isEmpty()) {
             idMovieCast = idMovie
             jobRequestCast = viewModelScope.launch {
                 isRequestedCast = true
                 try {
-                    listCastMovie = withContext(Dispatchers.IO) {
+                    _listCastMovie.value = withContext(Dispatchers.IO) {
                         moviesRepo.getCastFromMovie(idMovie)
                     }
                 } catch (e: Exception) {

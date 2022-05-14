@@ -13,6 +13,7 @@ fun ToolbarBack(
     title: String,
     iconNavigation: Int = R.drawable.ic_arrow_back,
     actionBack: (() -> Unit)? = null,
+    actionSearch: (() -> Unit)? = null,
 ) {
     if (actionBack != null) {
         TopAppBar(title = { Text(title) },
@@ -28,6 +29,14 @@ fun ToolbarBack(
     } else {
         TopAppBar(title = { Text(title) },
             backgroundColor = MaterialTheme.colors.primaryVariant,
-            contentColor = Color.White)
+            contentColor = Color.White,actions = {
+                if (actionSearch != null) {
+                    IconButton(onClick = actionSearch) {
+                        Icon(painterResource(R.drawable.ic_search),
+                            stringResource(id = R.string.description_search))
+                    }
+                }
+            })
     }
 }
+
