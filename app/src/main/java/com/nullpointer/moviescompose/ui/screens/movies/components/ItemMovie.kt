@@ -54,6 +54,7 @@ fun ItemMovie(
                 maxLines = 2,
                 style = MaterialTheme.typography.h6,
                 fontSize = 14.sp,
+                color = Color.White,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 10.dp, horizontal = 5.dp)

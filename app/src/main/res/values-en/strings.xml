@@ -1,0 +1,39 @@
+<resources>
+    <!-- language services -->
+    <string name="language">en</string>
+
+    <!-- toolbar -->
+    <string name="description_arrow_back">Navigate to the previous screen</string>
+    <string name="title_details_movie">Details</string>
+    <string name="description_search">Go to search screen</string>
+
+    <!-- screen main movie -->
+    <string name="description_img_movie">Picture of the current movie</string>
+
+    <string name="title_popular">Popular</string>
+    <string name="title_top_rated">Top Rated</string>
+    <string name="title_up_comming">Up Coming</string>
+
+    <!-- messages server error-->
+    <string name="error_conecction">Check your internet connection</string>
+    <string name="error_time_out_server">Server no response retry</string>
+    <string name="error_unknow">Unknown error</string>
+
+    <!-- details movie screen -->
+    <string name="description_img_actor">Image of the actor</string>
+    <string name="title_overview">Overview</string>
+    <string name="description_background_img">Movie cover image</string>
+    <string name="description_value">Rating icon</string>
+    <string name="sub_title_value">Raiting</string>
+    <string name="description_clock_icon">Movie release time icon</string>
+    <string name="sub_title_time_movie">Unknown</string>
+
+    <!-- search screen -->
+    <string name="description_clear_icon_search">Cleaning icon</string>
+    <string name="placeholder_search_movie">Type the text to search</string>
+    <string name="title_search_movie">Search</string>
+    <string name="description_search_icon">Search icon</string>
+    <string name="message_search_movie">Searching …</string>
+    <string name="message_start_search_movie">Search for the movie title</string>
+    <string name="message_no_found_screen">No results found</string>
+</resources>

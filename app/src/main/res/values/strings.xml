@@ -1,14 +1,42 @@
 <resources>
-    <string name="app_name">MoviesCompose</string>
-    <string name="description_img_movie">Imagen de la pelicula actual</string>
-    <string name="error_conecction">Verifique su conexion a intenet</string>
-    <string name="error_time_out_server">El servidor no response reintente</string>
-    <string name="error_unknow">Error desconocido</string>
+    <string name="app_name" translatable="false">MoviesCompose</string>
+
+    <!-- language services -->
     <string name="language">es</string>
-    <string name="title_popular">Popular</string>
-    <string name="title_top_rated">Mejor Valorados</string>
-    <string name="title_up_comming">Proximos strenos</string>
+
+    <!-- toolbar -->
     <string name="description_arrow_back">Navegar a la pantalla anterior</string>
     <string name="title_details_movie">Detalles</string>
-    <string name="description_search">Ir a la pantalla de busqueda</string>
+    <string name="description_search">Ir a la pantalla de búsqueda</string>
+
+    <!-- screen main movie -->
+    <string name="description_img_movie">Imagen de la película actual</string>
+
+    <string name="title_popular">Populares</string>
+    <string name="title_top_rated">Mejor Valorados</string>
+    <string name="title_up_comming">Próximos estrenos</string>
+
+    <!-- messages server error-->
+    <string name="error_conecction">Verifique su conexión a internet</string>
+    <string name="error_time_out_server">El servidor no response reintente</string>
+    <string name="error_unknow">Error desconocido</string>
+
+    <!-- details movie screen -->
+    <string name="description_img_actor">Imagen del actor</string>
+    <string name="title_overview">Sinopsis</string>
+    <string name="title_casting" translatable="false">Casting</string>
+    <string name="description_background_img">Imagen de portada de la película</string>
+    <string name="description_value">Icono de valoración</string>
+    <string name="sub_title_value">Valoración</string>
+    <string name="description_clock_icon">Icono del tiempo de lanzamiento de la película</string>
+    <string name="sub_title_time_movie">Desconocido</string>
+
+    <!-- search screen -->
+    <string name="description_clear_icon_search">Icono de limpieza</string>
+    <string name="placeholder_search_movie">Escribe el texto a buscar</string>
+    <string name="title_search_movie">Búsqueda</string>
+    <string name="description_search_icon">Icono de búsqueda</string>
+    <string name="message_search_movie">Buscando …</string>
+    <string name="message_start_search_movie">Busca el título de la película</string>
+    <string name="message_no_found_screen">No se encontraron resultados</string>
 </resources>

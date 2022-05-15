@@ -19,6 +19,7 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -71,15 +72,16 @@ fun SearchScreen(
         val listMovies = stateSearch.value
         when {
             searchViewModel.isLoading -> {
-                AnimationScreen(animation = R.raw.search, textEmpty = "Buscando...")
+                AnimationScreen(animation = R.raw.search, textEmpty = stringResource(R.string.message_search_movie))
             }
             searchViewModel.querySearch.isEmpty() -> {
-                AnimationScreen(animation = R.raw.movie,  textEmpty = "Busca tu pelicula")
+                AnimationScreen(animation = R.raw.movie, textEmpty = stringResource(R.string.message_start_search_movie))
             }
-            searchViewModel.querySearch.isNotEmpty() && listMovies.isEmpty()->{
-                AnimationScreen(animation = R.raw.no_found,  textEmpty = "No se encontraron resultados")
+            searchViewModel.querySearch.isNotEmpty() && listMovies.isEmpty() -> {
+                AnimationScreen(animation = R.raw.no_found,
+                    textEmpty = stringResource(R.string.message_no_found_screen))
             }
-            searchViewModel.querySearch.isNotEmpty() && listMovies.isNotEmpty()->{
+            searchViewModel.querySearch.isNotEmpty() && listMovies.isNotEmpty() -> {
                 LazyColumn(modifier = Modifier.padding(paddingValues)) {
                     items(listMovies.size) { index ->
                         ItemSearch(movie = listMovies[index], actionClick = {
@@ -111,7 +113,7 @@ fun ItemSearch(
         .padding(vertical = 2.dp, horizontal = 4.dp), onClick = { actionClick(movie) }) {
         Row(Modifier.padding(4.dp), verticalAlignment = Alignment.CenterVertically) {
             Image(painter = painter,
-                contentDescription = "Imagen de portada de la pelicula",
+                contentDescription = stringResource(id = R.string.description_img_movie),
                 modifier = Modifier
                     .height(50.dp)
                     .width(30.dp))
@@ -143,14 +145,14 @@ fun SearchToolbar(
             FloatingActionButton(onClick = actionClear, modifier = Modifier.size(20.dp)) {
                 Icon(modifier = Modifier.padding(4.dp),
                     painter = painterResource(id = R.drawable.ic_clear),
-                    contentDescription = "Icono de limpieza")
+                    contentDescription = stringResource(R.string.description_clear_icon_search))
             }
         },
-        placeholder = { Text(text = "Escribe el texto a buscar") },
-        label = { Text("Busqueda") },
+        placeholder = { Text(text = stringResource(R.string.placeholder_search_movie)) },
+        label = { Text(stringResource(R.string.title_search_movie)) },
         leadingIcon = {
             Icon(painter = painterResource(id = R.drawable.ic_search),
-                contentDescription = "Icono de busqueda")
+                contentDescription = stringResource(R.string.description_search_icon))
         },
         singleLine = true,
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),

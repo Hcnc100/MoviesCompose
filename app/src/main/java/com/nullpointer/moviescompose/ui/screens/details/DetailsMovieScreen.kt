@@ -69,7 +69,8 @@ fun DetailsMovieScreen(
             HeaderMovie(movie = movie)
             Card(modifier = Modifier.padding(10.dp), shape = RoundedCornerShape(5.dp)) {
                 Column(modifier = Modifier.padding(10.dp)) {
-                    Text(text = "Sinopsis", style = MaterialTheme.typography.h6)
+                    Text(text = stringResource(R.string.title_overview),
+                        style = MaterialTheme.typography.h6)
                     Spacer(modifier = Modifier.height(10.dp))
                     Text(text = movie.description, style = MaterialTheme.typography.body1)
                 }
@@ -77,7 +78,7 @@ fun DetailsMovieScreen(
             if (castViewModel.isRequestedCast) {
                 ScrollMoviesFake(3)
             } else {
-                Text(text = "Casting",
+                Text(text = stringResource(R.string.title_casting),
                     modifier = Modifier.padding(vertical = 5.dp, horizontal = 10.dp),
                     style = MaterialTheme.typography.h6)
                 LazyRow {
@@ -108,7 +109,7 @@ fun HeaderMovie(
         .fillMaxWidth()
         .height(250.dp)) {
         Image(painter = painterCover,
-            contentDescription = "Imagen de portada de la pelicula",
+            contentDescription = stringResource(R.string.description_background_img),
             modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.Crop
         )
@@ -129,7 +130,7 @@ fun HeaderMovie(
                 .width(100.dp),
                 shape = RoundedCornerShape(10.dp)) {
                 Image(painter = painterMovie,
-                    contentDescription = "Imagen de portada",
+                    contentDescription = stringResource(id = R.string.description_img_movie),
                     contentScale = ContentScale.Crop,
                     modifier = Modifier.fillMaxSize()
                 )
@@ -151,33 +152,37 @@ fun InfoCardMovie(movieDB: MovieDB, modifier: Modifier = Modifier) {
         Text(text = movieDB.title,
             style = MaterialTheme.typography.h6,
             maxLines = 2,
-            overflow = TextOverflow.Ellipsis)
+            overflow = TextOverflow.Ellipsis,
+            color = Color.White)
         Spacer(modifier = Modifier.height(6.dp))
         Text(text = movieDB.originalTitle,
             style = MaterialTheme.typography.caption,
             maxLines = 3,
             overflow = TextOverflow.Ellipsis,
-            fontWeight = FontWeight.W500)
+            fontWeight = FontWeight.W500,
+            color = Color.White)
         Spacer(modifier = Modifier.height(10.dp))
         Row(verticalAlignment = Alignment.CenterVertically) {
             Icon(painter = painterResource(id = R.drawable.ic_start),
-                contentDescription = "",
+                contentDescription = stringResource(R.string.description_value),
                 tint = Color.White, modifier = Modifier.size(20.dp))
             Spacer(modifier = Modifier.width(5.dp))
-            Text(text = "Valoracion", style = MaterialTheme.typography.caption)
+            Text(text = stringResource(R.string.sub_title_value),
+                style = MaterialTheme.typography.caption,
+                color = Color.White)
             Spacer(modifier = Modifier.width(5.dp))
             Text(text = "${(movieDB.voteAverage * 10).toInt()} %",
-                style = MaterialTheme.typography.caption)
+                style = MaterialTheme.typography.caption, color = Color.White)
         }
         Spacer(modifier = Modifier.height(10.dp))
         Row(verticalAlignment = Alignment.CenterVertically) {
             Icon(painter = painterResource(id = R.drawable.ic_time),
-                contentDescription = "",
+                contentDescription = stringResource(R.string.description_clock_icon),
                 tint = Color.White, modifier = Modifier.size(20.dp))
             Spacer(modifier = Modifier.width(5.dp))
-            Text(text = movieDB.releaseDate?.convertTime() ?: "Desconocido",
-                style = MaterialTheme.typography.caption)
+            Text(text = movieDB.releaseDate?.convertTime()
+                ?: stringResource(R.string.sub_title_time_movie),
+                style = MaterialTheme.typography.caption, color = Color.White)
         }
-
     }
 }

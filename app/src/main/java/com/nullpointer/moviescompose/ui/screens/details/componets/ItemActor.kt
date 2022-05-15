@@ -12,6 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberImagePainter
@@ -32,7 +33,7 @@ fun ItemCast(
             .height(200.dp)
             .width(150.dp)) {
             Image(painter = painter,
-                contentDescription = "Imagen del actor",
+                contentDescription = stringResource(R.string.description_img_actor),
                 modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Crop
             )
@@ -42,7 +43,7 @@ fun ItemCast(
                     .padding(horizontal = 10.dp, vertical = 5.dp)
                     .align(Alignment.BottomCenter),
                 style = MaterialTheme.typography.caption,
-                fontSize = 18.sp
+                fontSize = 18.sp, color = Color.White
             )
         }
     }
