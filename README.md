@@ -3,29 +3,26 @@ Simple app to consumer api movies with retrofit and save result in database with
 
 ### Instruccions
 
-1. Create or select your ptoject in https://console.cloud.google.com/
-2. Enable *Maps SDK for Android* and generate your api key
-3. Up your api key in *local.properties* in yout app file, remember name.In this case is *MAPS_API_KEY*
+1. Log Up in https://www.themoviedb.org/signup
+2. Get api key in https://www.themoviedb.org/settings/api
+3. Up your api key in *local.properties* in yout app file, remember name.In this case is *keyApiMovies*
 
 ```kotlin
-MAPS_API_KEY="your_api_key_xxxx"
+keyApiMovies="your_api_key_xxxx"
 ```
 
 
 
-4. Verify that has this in your *AndroidManifest*
+4. In the *build.gradle* in *defaultConfig* put:
 
- <meta-data
-            android:name="com.google.android.geo.API_KEY"
-            android:value="${MAPS_API_KEY}" />
- 
- This is possible for *id 'com.google.android.libraries.mapsplatform.secrets-gradle-plugin'* in your file *build.gradle*
+```kotlin
+def localProperties = new Properties()
+localProperties.load(new FileInputStream(rootProject.file("local.properties")))
+buildConfigField "String", "API_KEY_MOVIES",localProperties['keyApiMovies']
+```
+where *keyApiMovies* is the name that yout put in the step 3, and *API_KEY_MOVIES* is the name for your api key, for use in the inner code.
 
-
-### Note 
-
-This project is not complete, as the map compositing library does not have the *snapshot* functions, to take a picture of the tracking.
-the image will be replaced by the app logo in the main screen items
+With that caun you user *BuildConfig.API_KEY_MOVIES* in *MoviesApiServices*
 
 
 
