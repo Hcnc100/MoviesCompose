@@ -20,8 +20,8 @@ data class MovieDB(
     val imgCover: String,
     val typeMovie: TypeMovie,
     val voteAverage: Double,
-    @PrimaryKey
-    val id: Long? = null,
+    @PrimaryKey(autoGenerate = true)
+    val id: Long=0,
 ) : Parcelable {
     companion object {
 

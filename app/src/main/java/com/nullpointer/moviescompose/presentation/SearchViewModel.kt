@@ -28,6 +28,11 @@ class SearchViewModel @Inject constructor(
     private val moviesRepo: MoviesRepository,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
+
+    companion object{
+        private const val KEY_QUERY="KEY_QUERY"
+    }
+
     var isLoading by mutableStateOf(false)
     private var jobSearch: Job? = null
 
@@ -37,7 +42,7 @@ class SearchViewModel @Inject constructor(
     private val _messageSearch = Channel<Int>()
     val messageSearch = _messageSearch.receiveAsFlow()
 
-    var querySearch by SavableComposeState(savedStateHandle, "KEY_QUERY", "")
+    var querySearch by SavableComposeState(savedStateHandle, KEY_QUERY, "")
         private set
 
     fun searchMovie(query: String) {

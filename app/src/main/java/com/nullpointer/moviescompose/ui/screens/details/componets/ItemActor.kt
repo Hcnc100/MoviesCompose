@@ -12,10 +12,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImagePainter
+import coil.compose.rememberAsyncImagePainter
 import coil.compose.rememberImagePainter
+import coil.request.ImageRequest
 import com.nullpointer.moviescompose.R
 import com.nullpointer.moviescompose.models.Cast
 
@@ -23,11 +28,15 @@ import com.nullpointer.moviescompose.models.Cast
 fun ItemCast(
     cast: Cast,
 ) {
-    val painter = rememberImagePainter(data = cast.urlImg) {
-        placeholder(R.drawable.ic_person)
-        error(R.drawable.ic_error_person)
-        crossfade(true)
-    }
+
+    val painter = rememberAsyncImagePainter(
+        model = ImageRequest.Builder(LocalContext.current)
+            .crossfade(true)
+            .data(cast.urlImg)
+            .build(),
+        placeholder = painterResource(id = R.drawable.ic_person),
+        error = painterResource(id =R.drawable.ic_error_person),
+    )
     Card(modifier = Modifier.padding(4.dp), shape = RoundedCornerShape(10.dp)) {
         Box(Modifier
             .height(200.dp)
@@ -35,7 +44,7 @@ fun ItemCast(
             Image(painter = painter,
                 contentDescription = stringResource(R.string.description_img_actor),
                 modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.Crop
+                contentScale = if (painter.state is AsyncImagePainter.State.Success) ContentScale.Crop else ContentScale.Fit,
             )
             Box(modifier = Modifier.background(Color.Black.copy(alpha = .3f)))
             Text(text = cast.name,
