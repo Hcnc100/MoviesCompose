@@ -189,11 +189,15 @@ private fun InfoCardMovie(
     context: Context = LocalContext.current
 ) {
 
-    val dateMovie by derivedStateOf {
-        movieDB.releaseDate?.convertTime() ?: context.getString(R.string.sub_title_time_movie)
+    val dateMovie by remember {
+        derivedStateOf {
+            movieDB.releaseDate?.convertTime() ?: context.getString(R.string.sub_title_time_movie)
+        }
     }
-    val voteAverage by derivedStateOf {
-        "${(movieDB.voteAverage * 10).toInt()} %"
+    val voteAverage by remember {
+        derivedStateOf {
+            "${(movieDB.voteAverage * 10).toInt()} %"
+        }
     }
 
 
