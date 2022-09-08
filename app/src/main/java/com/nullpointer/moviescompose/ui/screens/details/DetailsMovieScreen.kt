@@ -28,6 +28,7 @@ import com.nullpointer.moviescompose.R
 import com.nullpointer.moviescompose.core.utils.Resource
 import com.nullpointer.moviescompose.core.utils.convertTime
 import com.nullpointer.moviescompose.core.utils.shareViewModel
+import com.nullpointer.moviescompose.models.Cast
 import com.nullpointer.moviescompose.models.MovieDB
 import com.nullpointer.moviescompose.presentation.CastViewModel
 import com.nullpointer.moviescompose.ui.screens.details.componets.ItemCast
@@ -50,11 +51,8 @@ fun DetailsMovieScreen(
     val stateListCast by castViewModel.listCastMovie.collectAsState()
 
     LaunchedEffect(key1 = Unit) {
-        castViewModel.messageCast.collect(
-            detailsStateScreen::showSnackMessage
-        )
+        castViewModel.messageCast.collect(detailsStateScreen::showSnackMessage)
     }
-
     Scaffold(
         scaffoldState = detailsStateScreen.scaffoldState,
         topBar = {
@@ -64,44 +62,56 @@ fun DetailsMovieScreen(
             )
         }
     ) { padding ->
-
         Column(
             modifier = Modifier
                 .padding(padding)
                 .verticalScroll(rememberScrollState())
         ) {
             HeaderMovie(movie = movie)
-            Card(modifier = Modifier.padding(10.dp), shape = RoundedCornerShape(5.dp)) {
-                Column(modifier = Modifier.padding(10.dp)) {
-                    Text(
-                        text = stringResource(R.string.title_overview),
-                        style = MaterialTheme.typography.h6
-                    )
-                    Spacer(modifier = Modifier.height(10.dp))
-                    Text(text = movie.description, style = MaterialTheme.typography.body1)
+            ReviewMovie(movie = movie)
+            ListCastState(listCast = stateListCast)
+        }
+    }
+}
+
+@Composable
+private fun ReviewMovie(movie: MovieDB) {
+    Card(modifier = Modifier.padding(10.dp), shape = RoundedCornerShape(5.dp)) {
+        Column(modifier = Modifier.padding(10.dp)) {
+            Text(
+                text = stringResource(R.string.title_overview),
+                style = MaterialTheme.typography.h6
+            )
+            Spacer(modifier = Modifier.height(10.dp))
+            Text(text = movie.description, style = MaterialTheme.typography.body1)
+        }
+    }
+}
+
+@Composable
+private fun ListCastState(
+    listCast: Resource<List<Cast>>
+) {
+    when (listCast) {
+        is Resource.Success -> {
+            Text(
+                text = stringResource(R.string.title_casting),
+                modifier = Modifier.padding(vertical = 5.dp, horizontal = 10.dp),
+                style = MaterialTheme.typography.h6
+            )
+            LazyRow {
+                items(listCast.data,
+                    key = { it.name }) { cast ->
+                    ItemCast(cast)
                 }
             }
-            when (val stateCast = stateListCast) {
-                is Resource.Success -> {
-                    Text(
-                        text = stringResource(R.string.title_casting),
-                        modifier = Modifier.padding(vertical = 5.dp, horizontal = 10.dp),
-                        style = MaterialTheme.typography.h6
-                    )
-                    LazyRow {
-                        items(stateCast.data, key = { it.name }) { cast ->
-                            ItemCast(cast)
-                        }
-                    }
-                }
-                else -> {
-                    Column {
-                        TitleFakeMovie()
-                        LazyRow {
-                            items(5, key = { it }) {
-                                CardContainerFake()
-                            }
-                        }
+        }
+        else -> {
+            Column {
+                TitleFakeMovie()
+                LazyRow {
+                    items(5, key = { it }) {
+                        CardContainerFake()
                     }
                 }
             }
@@ -113,8 +123,6 @@ fun DetailsMovieScreen(
 private fun HeaderMovie(
     movie: MovieDB,
 ) {
-
-
     val painterMovie = rememberAsyncImagePainter(
         model = ImageRequest
             .Builder(LocalContext.current)
