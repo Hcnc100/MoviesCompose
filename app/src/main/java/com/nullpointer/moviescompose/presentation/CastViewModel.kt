@@ -1,23 +1,19 @@
 package com.nullpointer.moviescompose.presentation
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.nullpointer.moviescompose.R
-import com.nullpointer.moviescompose.core.utils.NetWorkException
+import com.nullpointer.moviescompose.core.utils.ExceptionManager
 import com.nullpointer.moviescompose.core.utils.Resource
-import com.nullpointer.moviescompose.core.utils.TimeOutException
+import com.nullpointer.moviescompose.core.utils.launchSafeIO
 import com.nullpointer.moviescompose.domain.MoviesRepository
 import com.nullpointer.moviescompose.models.Cast
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
-import timber.log.Timber
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -29,7 +25,6 @@ class CastViewModel @Inject constructor(
     val messageCast = _messageCast.receiveAsFlow()
 
     private var jobRequestCast: Job? = null
-    var isRequestedCast by mutableStateOf(true)
 
     private val _listCastMovie = MutableStateFlow<Resource<List<Cast>>>(Resource.Loading)
     val listCastMovie = _listCastMovie.asStateFlow()
@@ -41,26 +36,24 @@ class CastViewModel @Inject constructor(
         jobRequestCast?.cancel()
         if (idMovie != idMovieCast || _listCastMovie.value is Resource.Failure) {
             idMovieCast = idMovie
-            jobRequestCast = viewModelScope.launch {
-                _listCastMovie.value = Resource.Loading
-                try {
-                    val result = withContext(Dispatchers.IO) {
-                        moviesRepo.getCastFromMovie(idMovie)
+            jobRequestCast = launchSafeIO(
+                blockBefore = { _listCastMovie.value = Resource.Loading },
+                blockIO = {
+                    val listCast = moviesRepo.getCastFromMovie(idMovie)
+                    withContext(Dispatchers.Main) {
+                        _listCastMovie.value = Resource.Success(listCast)
                     }
-                    _listCastMovie.value = Resource.Success(result)
-                } catch (e: Exception) {
-                    when (e) {
-                        is CancellationException -> throw e
-                        is NetWorkException -> _messageCast.trySend(R.string.error_conecction)
-                        is TimeOutException -> _messageCast.trySend(R.string.error_time_out_server)
-                        else -> {
-                            _messageCast.trySend(R.string.error_unknow)
-                            Timber.e("Unknown error api cast request $e")
-                        }
-                    }
+                },
+                blockException = { exception ->
                     _listCastMovie.value = Resource.Failure
+                    _messageCast.trySend(
+                        ExceptionManager.getMessageForException(
+                            exception,
+                            "Error request cast from $idMovie:"
+                        )
+                    )
                 }
-            }
+            )
         }
     }
 }

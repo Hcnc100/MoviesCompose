@@ -5,14 +5,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.nullpointer.moviescompose.R
-import com.nullpointer.moviescompose.core.utils.NetWorkException
+import com.nullpointer.moviescompose.core.utils.ExceptionManager
 import com.nullpointer.moviescompose.core.utils.Resource
-import com.nullpointer.moviescompose.core.utils.TimeOutException
+import com.nullpointer.moviescompose.core.utils.launchSafeIO
 import com.nullpointer.moviescompose.domain.MoviesRepository
 import com.nullpointer.moviescompose.models.MovieDB
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
 import timber.log.Timber
@@ -65,7 +66,7 @@ class MoviesViewModel @Inject constructor(
         Resource.Loading
     )
 
-    var jobRequest: Job? = null
+    private var jobRequest: Job? = null
     var isRequested by mutableStateOf(true)
 
     init {
@@ -74,29 +75,23 @@ class MoviesViewModel @Inject constructor(
 
     fun updateAllMovies() {
         jobRequest?.cancel()
-        jobRequest = viewModelScope.launch {
-            supervisorScope {
-                try {
-                    isRequested = true
-                    val sizePopularUpdate = async(Dispatchers.IO) { moviesRepo.updateAllPopular() }
-                    val sizeTopRatedUpdate = async(Dispatchers.IO) { moviesRepo.updateAllTopRated() }
-                    val sizeUpcomingUpdate = async(Dispatchers.IO) { moviesRepo.updateAllUpcoming() }
-                    val size = sizePopularUpdate.await() + sizeTopRatedUpdate.await() + sizeUpcomingUpdate.await()
-                    Timber.d("Size request movies $size")
-                } catch (e: Exception) {
-                    when (e) {
-                        is CancellationException -> throw e
-                        is NetWorkException -> _messageMovies.trySend(R.string.error_conecction)
-                        is TimeOutException -> _messageMovies.trySend(R.string.error_time_out_server)
-                        else -> {
-                            _messageMovies.trySend(R.string.error_unknow)
-                            Timber.e("Unknown error api request $e")
-                        }
-                    }
-                } finally {
-                    isRequested = false
-                }
+
+        jobRequest = launchSafeIO(
+            blockBefore = { isRequested = true },
+            blockAfter = { isRequested = false },
+            blockIO = {
+                val sizePopularUpdate = async(Dispatchers.IO) { moviesRepo.updateAllPopular() }
+                val sizeTopRatedUpdate = async(Dispatchers.IO) { moviesRepo.updateAllTopRated() }
+                val sizeUpcomingUpdate = async(Dispatchers.IO) { moviesRepo.updateAllUpcoming() }
+                val size =
+                    sizePopularUpdate.await() + sizeTopRatedUpdate.await() + sizeUpcomingUpdate.await()
+                Timber.d("Size request movies $size")
+            },
+            blockException = {
+                _messageMovies.trySend(
+                    ExceptionManager.getMessageForException(it, "Error request all movies")
+                )
             }
-        }
+        )
     }
 }

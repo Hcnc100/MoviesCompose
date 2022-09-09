@@ -2,6 +2,7 @@ package com.nullpointer.moviescompose.data.remote.datasource
 
 import android.content.Context
 import com.nullpointer.moviescompose.R
+import com.nullpointer.moviescompose.core.utils.ExceptionManager
 import com.nullpointer.moviescompose.core.utils.InternetCheck
 import com.nullpointer.moviescompose.core.utils.NetWorkException
 import com.nullpointer.moviescompose.core.utils.TimeOutException
@@ -17,12 +18,12 @@ class MoviesRemoteDataSourceImpl(
     private val context: Context,
 ) : MoviesRemoteDataSource {
 
-    private suspend fun callApiWithTimeout(
+    private suspend fun <T> callApiWithTimeout(
         timeout: Long = 3_000,
-        callApi: suspend () -> MovieApiResponse,
-    ): MovieApiResponse {
-        if (!InternetCheck.isNetworkAvailable()) throw NetWorkException()
-        return withTimeoutOrNull(timeout) { callApi() } ?: throw TimeOutException()
+        callApi: suspend () -> T,
+    ): T {
+        if (!InternetCheck.isNetworkAvailable()) throw Exception(ExceptionManager.NO_NETWORK_ERROR)
+        return withTimeoutOrNull(timeout) { callApi() }!!
     }
 
     override suspend fun getUpComingMovies(): List<MovieDB> {
@@ -47,21 +48,19 @@ class MoviesRemoteDataSourceImpl(
     }
 
     override suspend fun getCreditsToMovie(idMovie: Long): List<Cast> {
-        if (!InternetCheck.isNetworkAvailable()) throw NetWorkException()
-        val response = withTimeoutOrNull(3_000) {
+        val response = callApiWithTimeout {
             moviesApiServices.getCredits(idMovie)
-        } ?: throw TimeOutException()
+        }
         return response.cast.map(Cast::fromCastApi)
     }
 
     override suspend fun getMoviesForSearch(query: String): List<MovieApiResponse.Movie> {
-        if (!InternetCheck.isNetworkAvailable()) throw NetWorkException()
-        return withTimeoutOrNull(3_000) {
+        return callApiWithTimeout {
             moviesApiServices.getResultForSearch(
                 language = context.getString(R.string.language),
                 page = 1,
                 includeAdult = true,
                 query = query).results
-        } ?: throw TimeOutException()
+        }
     }
 }
