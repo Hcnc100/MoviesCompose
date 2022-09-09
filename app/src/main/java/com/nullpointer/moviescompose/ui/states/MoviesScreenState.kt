@@ -10,18 +10,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 
 class MoviesScreenState(
-    scaffoldState: ScaffoldState,
     context: Context,
-    focusManager: FocusManager
-):SimpleScreenState(
-    scaffoldState, context, focusManager
-)
+    scaffoldState: ScaffoldState
+):SimpleScreenState(context, scaffoldState)
 
 @Composable
 fun rememberMoviesScreenState(
-    scaffoldState: ScaffoldState = rememberScaffoldState(),
     context: Context = LocalContext.current,
-    focusManager: FocusManager = LocalFocusManager.current
+    scaffoldState: ScaffoldState = rememberScaffoldState(),
 ) = remember(scaffoldState) {
-    MoviesScreenState(scaffoldState, context, focusManager)
+    MoviesScreenState(context, scaffoldState)
 }

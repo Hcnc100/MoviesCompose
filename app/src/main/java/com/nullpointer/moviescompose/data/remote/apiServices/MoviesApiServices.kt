@@ -1,7 +1,7 @@
 package com.nullpointer.moviescompose.data.remote.apiServices
 
 import com.nullpointer.moviescompose.BuildConfig
-import com.nullpointer.moviescompose.models.apiResponse.CastApiResponse
+import com.nullpointer.moviescompose.models.apiResponse.cast.CastApiResponse
 import com.nullpointer.moviescompose.models.apiResponse.MovieApiResponse
 import retrofit2.http.GET
 import retrofit2.http.Path

@@ -34,6 +34,7 @@
     <string name="title_search_movie">Search</string>
     <string name="description_search_icon">Search icon</string>
     <string name="message_search_movie">Searching …</string>
+    <string name="error_search_movie">Error to search, retry</string>
     <string name="message_start_search_movie">Search for the movie title</string>
     <string name="message_no_found_screen">No results found</string>
 </resources>

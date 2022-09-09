@@ -5,7 +5,7 @@ import com.nullpointer.moviescompose.data.local.datasource.MovieLocalDataSource
 import com.nullpointer.moviescompose.data.remote.datasource.MoviesRemoteDataSource
 import com.nullpointer.moviescompose.models.Cast
 import com.nullpointer.moviescompose.models.MovieDB
-import com.nullpointer.moviescompose.models.apiResponse.MovieApiResponse
+import com.nullpointer.moviescompose.models.apiResponse.movie.MovieDTO
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
@@ -38,10 +38,10 @@ class MoviesRepoImpl @Inject constructor(
     override suspend fun getCastFromMovie(idMovie: Long): List<Cast> =
         moviesRemoteDataSource.getCreditsToMovie(idMovie)
 
-    override suspend fun getMoviesForSearch(query: String): List<MovieApiResponse.Movie> {
-        return moviesRemoteDataSource.getMoviesForSearch(query).map {
-            it.copy(poster_path = "${Constants.PREFIX_IMG_URL}${it.poster_path}")
+    override suspend fun getMoviesForSearch(query: String): List<MovieDTO> =
+        moviesRemoteDataSource.getMoviesForSearch(query).map {
+            it.copy(posterPath = "${Constants.PREFIX_IMG_URL}${it.posterPath}")
         }
-    }
+
 
 }

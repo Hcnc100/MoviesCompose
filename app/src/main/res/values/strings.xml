@@ -37,6 +37,7 @@
     <string name="title_search_movie">Búsqueda</string>
     <string name="description_search_icon">Icono de búsqueda</string>
     <string name="message_search_movie">Buscando …</string>
+    <string name="error_search_movie">Error al buscar, reintente</string>
     <string name="message_start_search_movie">Busca el título de la película</string>
     <string name="message_no_found_screen">No se encontraron resultados</string>
 </resources>

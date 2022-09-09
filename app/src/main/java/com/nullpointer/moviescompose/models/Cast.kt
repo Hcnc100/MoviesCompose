@@ -2,7 +2,7 @@ package com.nullpointer.moviescompose.models
 
 import android.os.Parcelable
 import com.nullpointer.moviescompose.core.constants.Constants
-import com.nullpointer.moviescompose.models.apiResponse.CastApiResponse
+import com.nullpointer.moviescompose.models.apiResponse.cast.CastDTO
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
@@ -11,7 +11,7 @@ data class Cast(
     val urlImg: String? = null,
 ) : Parcelable {
     companion object {
-        fun fromCastApi(castApi: CastApiResponse.CastApi): Cast {
+        fun fromCastApi(castApi: CastDTO): Cast {
             val urlImg = castApi.profile_path?.let {
                 "${Constants.PREFIX_IMG_URL}$it"
             }

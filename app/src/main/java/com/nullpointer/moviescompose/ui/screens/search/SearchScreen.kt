@@ -3,34 +3,38 @@ package com.nullpointer.moviescompose.ui.screens.search
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.nullpointer.moviescompose.R
-import com.nullpointer.moviescompose.models.MovieDB
+import com.nullpointer.moviescompose.core.utils.Resource
+import com.nullpointer.moviescompose.core.utils.shareViewModel
+import com.nullpointer.moviescompose.data.remote.datasource.toMovie
 import com.nullpointer.moviescompose.models.TypeMovie
-import com.nullpointer.moviescompose.models.apiResponse.MovieApiResponse
+import com.nullpointer.moviescompose.models.apiResponse.movie.MovieDTO
+import com.nullpointer.moviescompose.presentation.CastViewModel
 import com.nullpointer.moviescompose.presentation.SearchViewModel
 import com.nullpointer.moviescompose.ui.screens.animation.AnimationScreen
 import com.nullpointer.moviescompose.ui.screens.destinations.DetailsMovieScreenDestination
-import com.nullpointer.moviescompose.ui.states.SimpleScreenState
-import com.nullpointer.moviescompose.ui.states.rememberSimpleScreenState
+import com.nullpointer.moviescompose.ui.states.SearchScreenState
+import com.nullpointer.moviescompose.ui.states.rememberSearchScreenState
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
@@ -38,17 +42,14 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 @Composable
 fun SearchScreen(
     navigator: DestinationsNavigator,
+    castViewModel: CastViewModel = shareViewModel(),
     searchViewModel: SearchViewModel = hiltViewModel(),
-    searchScreenState: SimpleScreenState = rememberSimpleScreenState()
+    searchScreenState: SearchScreenState = rememberSearchScreenState()
 ) {
     val listMovies by searchViewModel.listSearch.collectAsState()
-    val focusRequester = remember { FocusRequester() }
-
-    LaunchedEffect(Unit) {
-        focusRequester.requestFocus()
-    }
 
     LaunchedEffect(key1 = Unit) {
+        searchScreenState.requestFocus()
         searchViewModel.messageSearch.collect(searchScreenState::showSnackMessage)
     }
 
@@ -57,56 +58,91 @@ fun SearchScreen(
         topBar = {
             SearchToolbar(
                 queryInput = searchViewModel.querySearch,
-                focusRequester = focusRequester,
                 changeQuery = searchViewModel::searchMovie,
-                actionClear = searchViewModel::clearSearch
+                focusRequester = searchScreenState.focusRequester,
+                hiddenKeyboard = searchScreenState::hiddenKeyboard
             )
         }
     ) { paddingValues ->
-        when {
-            searchViewModel.isLoading -> {
-                AnimationScreen(animation = R.raw.search, textEmpty = stringResource(R.string.message_search_movie))
-            }
-            searchViewModel.querySearch.isEmpty() -> {
-                AnimationScreen(animation = R.raw.movie, textEmpty = stringResource(R.string.message_start_search_movie))
-            }
-            searchViewModel.querySearch.isNotEmpty() && listMovies.isEmpty() -> {
-                AnimationScreen(animation = R.raw.no_found,
-                    textEmpty = stringResource(R.string.message_no_found_screen))
-            }
-            searchViewModel.querySearch.isNotEmpty() && listMovies.isNotEmpty() -> {
-                LazyColumn(modifier = Modifier.padding(paddingValues)) {
-                    items(listMovies.size) { index ->
-                        ItemSearch(movie = listMovies[index], actionClick = {
-                            navigator.navigate(DetailsMovieScreenDestination.invoke(
-                                MovieDB.fromMovieApi(it, TypeMovie.TOP_RATED)
-                            ))
-                        })
+        ListSearchMovies(
+            modifier = Modifier.padding(paddingValues),
+            stateListSearch = listMovies,
+            actionClickMovie = {
+                castViewModel.getCastFromMovie(it.id)
+                navigator.navigate(DetailsMovieScreenDestination(it.toMovie(TypeMovie.TOP_RATED)))
+            })
+    }
+}
+
+@Composable
+private fun ListSearchMovies(
+    stateListSearch: Resource<List<MovieDTO>>?,
+    modifier: Modifier = Modifier,
+    actionClickMovie: (MovieDTO) -> Unit
+) {
+    when (stateListSearch) {
+        Resource.Failure -> {
+            AnimationScreen(
+                animation = R.raw.no_found,
+                textEmpty = stringResource(R.string.error_search_movie),
+                modifier = modifier
+            )
+        }
+        Resource.Loading -> {
+            AnimationScreen(
+                animation = R.raw.search,
+                textEmpty = stringResource(R.string.message_search_movie),
+                modifier = modifier
+            )
+        }
+        is Resource.Success -> {
+            val listMovies = stateListSearch.data
+            if (listMovies.isEmpty()) {
+                AnimationScreen(
+                    animation = R.raw.no_found,
+                    textEmpty = stringResource(R.string.message_no_found_screen),
+                    modifier = modifier
+                )
+            } else {
+                LazyColumn(modifier = modifier) {
+                    items(listMovies, key = { it.id }) { movie ->
+                        ItemSearch(
+                            movie = movie,
+                            actionClick = actionClickMovie
+                        )
                     }
                 }
             }
         }
-
+        else -> {
+            AnimationScreen(
+                animation = R.raw.movie,
+                textEmpty = stringResource(R.string.message_start_search_movie),
+                modifier = modifier
+            )
+        }
     }
 }
 
+
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun ItemSearch(
-    movie: MovieApiResponse.Movie,
-    actionClick: (MovieApiResponse.Movie) -> Unit,
+private fun ItemSearch(
+    movie: MovieDTO,
+    actionClick: (MovieDTO) -> Unit,
 ) {
     val painter = rememberAsyncImagePainter(
         model = ImageRequest.Builder(LocalContext.current)
             .crossfade(true)
-            .data(movie.poster_path)
+            .data(movie.posterPath)
             .build(),
         placeholder = painterResource(id = R.drawable.ic_movies),
         error = painterResource(id = R.drawable.ic_broken_image),
     )
-    Card(modifier = Modifier
-        .fillMaxWidth()
-        .padding(vertical = 2.dp, horizontal = 4.dp), onClick = { actionClick(movie) }) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 2.dp, horizontal = 4.dp), onClick = { actionClick(movie) }) {
         Row(Modifier.padding(4.dp), verticalAlignment = Alignment.CenterVertically) {
             Image(
                 painter = painter,
@@ -122,40 +158,56 @@ fun ItemSearch(
 }
 
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun SearchToolbar(
+private fun SearchToolbar(
     queryInput: String,
-    actionClear: () -> Unit,
-    changeQuery: (query: String) -> Unit,
+    hiddenKeyboard: () -> Unit,
     focusRequester: FocusRequester,
+    changeQuery: (query: String) -> Unit
 ) {
-    val keyboardController = LocalSoftwareKeyboardController.current
+
+    var textFieldValueState by remember {
+        mutableStateOf(
+            TextFieldValue(
+                text = queryInput,
+                selection = TextRange(queryInput.length)
+            )
+        )
+    }
     OutlinedTextField(
         shape = RoundedCornerShape(12.dp),
         modifier = Modifier
             .padding(10.dp)
             .fillMaxWidth()
             .focusRequester(focusRequester),
-        value = queryInput,
-        onValueChange = changeQuery,
+        value = textFieldValueState,
+        onValueChange = {
+            if (it.text != queryInput) changeQuery(it.text)
+            textFieldValueState = it
+        },
         trailingIcon = {
-            FloatingActionButton(onClick = actionClear, modifier = Modifier.size(20.dp)) {
-                Icon(modifier = Modifier.padding(4.dp),
-                    painter = painterResource(id = R.drawable.ic_clear),
-                    contentDescription = stringResource(R.string.description_clear_icon_search))
+            if (queryInput.isNotEmpty()) {
+                FloatingActionButton(onClick = {
+                    textFieldValueState = textFieldValueState.copy(text = "")
+                }, modifier = Modifier.size(20.dp)) {
+                    Icon(
+                        modifier = Modifier.padding(4.dp),
+                        painter = painterResource(id = R.drawable.ic_clear),
+                        contentDescription = stringResource(R.string.description_clear_icon_search)
+                    )
+                }
             }
         },
         placeholder = { Text(text = stringResource(R.string.placeholder_search_movie)) },
         label = { Text(stringResource(R.string.title_search_movie)) },
         leadingIcon = {
-            Icon(painter = painterResource(id = R.drawable.ic_search),
-                contentDescription = stringResource(R.string.description_search_icon))
+            Icon(
+                painter = painterResource(id = R.drawable.ic_search),
+                contentDescription = stringResource(R.string.description_search_icon)
+            )
         },
         singleLine = true,
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-        keyboardActions = KeyboardActions(
-            onDone = { keyboardController?.hide() }
-        ),
+        keyboardActions = KeyboardActions(onDone = { hiddenKeyboard() }),
     )
 }

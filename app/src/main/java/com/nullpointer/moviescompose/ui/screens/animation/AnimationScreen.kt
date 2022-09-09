@@ -18,8 +18,9 @@ import com.airbnb.lottie.compose.*
 fun AnimationScreen(
     @RawRes animation: Int,
     textEmpty: String,
+    modifier: Modifier = Modifier
 ) {
-    Column {
+    Column(modifier = modifier) {
         LottieContainer(
             modifier = Modifier
                 .weight(.8f)

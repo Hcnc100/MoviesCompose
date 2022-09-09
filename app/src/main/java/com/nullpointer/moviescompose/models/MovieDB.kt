@@ -22,24 +22,4 @@ data class MovieDB(
     val voteAverage: Double,
     @PrimaryKey(autoGenerate = true)
     val id: Long=0,
-) : Parcelable {
-    companion object {
-
-        fun fromMovieApi(movieApi: MovieApiResponse.Movie, typeMovie: TypeMovie): MovieDB {
-            val simpleFormat = SimpleDateFormat("yyyy-mm-dd", Locale.getDefault())
-            val date = simpleFormat.parse(movieApi.release_date)
-            return MovieDB(
-                title = movieApi.title,
-                originalTitle = movieApi.original_title,
-                imgCover = "$PREFIX_IMG_URL${movieApi.backdrop_path}",
-                imgMovie = "$PREFIX_IMG_URL${movieApi.poster_path}",
-                description = movieApi.overview,
-                releaseDate = date?.time,
-                voteAverage = movieApi.vote_average,
-                typeMovie = typeMovie,
-                id = movieApi.id
-            )
-        }
-
-    }
-}
+) : Parcelable
