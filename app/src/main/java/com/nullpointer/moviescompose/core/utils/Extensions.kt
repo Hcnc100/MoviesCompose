@@ -26,21 +26,25 @@ inline fun <reified VM : ViewModel> shareViewModel():VM {
 
 fun ViewModel.launchSafeIO(
     blockBefore: suspend CoroutineScope.() -> Unit = {},
-    blockAfter: suspend CoroutineScope.() -> Unit = {},
+    blockAfter: suspend CoroutineScope.(Boolean) -> Unit = {},
     blockException: suspend CoroutineScope.(Exception) -> Unit = {},
     blockIO: suspend CoroutineScope.() -> Unit,
 ): Job {
+    var isForCancelled = false
     return viewModelScope.launch {
         try {
             blockBefore()
             withContext(Dispatchers.IO) { blockIO() }
         } catch (e: Exception) {
             when (e) {
-                is CancellationException -> throw e
+                is CancellationException -> {
+                    isForCancelled = true
+                    throw e
+                }
                 else -> blockException(e)
             }
         } finally {
-            blockAfter()
+            blockAfter(isForCancelled)
         }
     }
 }
