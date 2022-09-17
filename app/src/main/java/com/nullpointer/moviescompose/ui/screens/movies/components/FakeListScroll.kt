@@ -35,7 +35,7 @@ fun FakeListScroll(
 }
 
 @Composable
-fun TitleFakeMovie(
+private fun TitleFakeMovie(
     modifier: Modifier = Modifier
 ) {
 
@@ -49,7 +49,7 @@ fun TitleFakeMovie(
 }
 
 @Composable
-fun CardContainerFake(
+private fun CardContainerFake(
     modifier: Modifier = Modifier
 ) {
     Box(

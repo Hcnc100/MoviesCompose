@@ -141,7 +141,7 @@ private fun ListCastState(
 
 
 @Composable
-fun TitleMovieRoad(
+private fun TitleMovieRoad(
     title: String,
     maxLinesTitle: Int,
     fontSize: Float,
@@ -176,7 +176,7 @@ private fun IconBack(
     ) {
         Icon(
             painter = painterResource(id = R.drawable.ic_arrow_back),
-            contentDescription = null,
+            contentDescription = stringResource(id = R.string.description_arrow_back),
             tint = Color.White,
         )
     }
