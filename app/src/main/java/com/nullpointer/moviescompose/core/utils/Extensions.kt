@@ -5,7 +5,7 @@ import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.State
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.graphics.Color
@@ -58,9 +58,13 @@ fun ViewModel.launchSafeIO(
     }
 }
 
+@Composable
+fun getCorrectGrayColor(): State<Color> {
+    return animateColorAsState(if (isSystemInDarkTheme()) Color.LightGray else Color.DarkGray)
+}
+
 fun Modifier.myShimmer(
     shimmer: Shimmer,
 ): Modifier = composed {
-    val color by animateColorAsState(if (isSystemInDarkTheme()) Color.LightGray else Color.DarkGray)
-    shimmer(shimmer).background(color)
+    shimmer(shimmer).background(getCorrectGrayColor().value)
 }
