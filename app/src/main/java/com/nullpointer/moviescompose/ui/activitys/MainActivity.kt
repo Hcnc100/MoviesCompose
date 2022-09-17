@@ -29,11 +29,14 @@ class MainActivity : ComponentActivity() {
         }
         setContent {
             MoviesComposeTheme {
-                DestinationsNavHost(
+
+            DestinationsNavHost(
                     navController = rememberNavController(),
                     navGraph = NavGraphs.root,
                 )
+
             }
+
         }
     }
 }

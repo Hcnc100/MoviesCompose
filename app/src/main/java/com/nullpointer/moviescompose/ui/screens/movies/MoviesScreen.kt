@@ -53,11 +53,14 @@ fun MoviesScreens(
         }
     ) {
         SwipeRefresh(
+            onRefresh = moviesViewModel::updateAllMovies,
             state = rememberSwipeRefreshState(moviesViewModel.isRequested),
-            onRefresh = moviesViewModel::updateAllMovies) {
-            Column(modifier = Modifier
-                .padding(it)
-                .verticalScroll(rememberScrollState())) {
+        ) {
+            Column(
+                modifier = Modifier
+                    .padding(it)
+                    .verticalScroll(rememberScrollState())
+            ) {
                 ScrollMovies(
                     listMovies = statePopularMovies,
                     titleMovies = stringResource(R.string.title_popular),

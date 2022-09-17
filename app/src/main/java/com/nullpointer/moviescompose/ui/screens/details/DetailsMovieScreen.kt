@@ -35,8 +35,7 @@ import com.nullpointer.moviescompose.models.Cast
 import com.nullpointer.moviescompose.models.MovieDB
 import com.nullpointer.moviescompose.presentation.CastViewModel
 import com.nullpointer.moviescompose.ui.screens.details.componets.ItemCast
-import com.nullpointer.moviescompose.ui.screens.movies.components.CardContainerFake
-import com.nullpointer.moviescompose.ui.screens.movies.components.TitleFakeMovie
+import com.nullpointer.moviescompose.ui.screens.movies.components.FakeListScroll
 import com.nullpointer.moviescompose.ui.states.DetailsScreenState
 import com.nullpointer.moviescompose.ui.states.rememberDetailsScreenState
 import com.ramcosta.composedestinations.annotation.Destination
@@ -147,16 +146,7 @@ private fun ListCastState(
                 }
             }
         }
-        else -> {
-            Column {
-                TitleFakeMovie()
-                LazyRow {
-                    items(5, key = { it }) {
-                        CardContainerFake()
-                    }
-                }
-            }
-        }
+        else -> FakeListScroll()
     }
 }
 

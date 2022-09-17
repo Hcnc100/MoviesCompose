@@ -1,11 +1,20 @@
 package com.nullpointer.moviescompose.core.utils
 
 import androidx.activity.ComponentActivity
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.composed
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.valentinilk.shimmer.Shimmer
+import com.valentinilk.shimmer.shimmer
 import kotlinx.coroutines.*
 import java.text.Format
 import java.text.SimpleDateFormat
@@ -47,4 +56,11 @@ fun ViewModel.launchSafeIO(
             blockAfter(isForCancelled)
         }
     }
+}
+
+fun Modifier.myShimmer(
+    shimmer: Shimmer,
+): Modifier = composed {
+    val color by animateColorAsState(if (isSystemInDarkTheme()) Color.LightGray else Color.DarkGray)
+    shimmer(shimmer).background(color)
 }
