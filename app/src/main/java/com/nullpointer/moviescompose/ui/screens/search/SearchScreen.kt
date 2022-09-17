@@ -1,6 +1,5 @@
 package com.nullpointer.moviescompose.ui.screens.search
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -13,7 +12,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
@@ -21,8 +19,6 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import coil.compose.rememberAsyncImagePainter
-import coil.request.ImageRequest
 import com.nullpointer.moviescompose.R
 import com.nullpointer.moviescompose.core.utils.Resource
 import com.nullpointer.moviescompose.core.utils.shareViewModel
@@ -33,6 +29,7 @@ import com.nullpointer.moviescompose.presentation.CastViewModel
 import com.nullpointer.moviescompose.presentation.SearchViewModel
 import com.nullpointer.moviescompose.ui.screens.animation.AnimationScreen
 import com.nullpointer.moviescompose.ui.screens.destinations.DetailsMovieScreenDestination
+import com.nullpointer.moviescompose.ui.share.AsyncImageFade
 import com.nullpointer.moviescompose.ui.states.SearchScreenState
 import com.nullpointer.moviescompose.ui.states.rememberSearchScreenState
 import com.ramcosta.composedestinations.annotation.Destination
@@ -131,22 +128,16 @@ private fun ItemSearch(
     movie: MovieDTO,
     actionClick: (MovieDTO) -> Unit,
 ) {
-    val painter = rememberAsyncImagePainter(
-        model = ImageRequest.Builder(LocalContext.current)
-            .crossfade(true)
-            .data(movie.posterPath)
-            .build(),
-        placeholder = painterResource(id = R.drawable.ic_movies),
-        error = painterResource(id = R.drawable.ic_broken_image),
-    )
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 2.dp, horizontal = 4.dp), onClick = { actionClick(movie) }) {
         Row(Modifier.padding(4.dp), verticalAlignment = Alignment.CenterVertically) {
-            Image(
-                painter = painter,
-                contentDescription = stringResource(id = R.string.description_img_movie),
+            AsyncImageFade(
+                data = movie.posterPath,
+                contentDescription = R.string.description_img_movie,
+                resourceLoading = R.drawable.ic_movies,
+                resourceFailed = R.drawable.ic_broken_image,
                 modifier = Modifier
                     .height(50.dp)
                     .width(30.dp)

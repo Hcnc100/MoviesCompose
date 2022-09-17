@@ -1,11 +1,13 @@
 package com.nullpointer.moviescompose.ui.screens.details.componets
 
 import android.content.Context
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
+import androidx.compose.material.Card
+import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -13,7 +15,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -21,12 +22,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.compose.AsyncImagePainter
-import coil.compose.rememberAsyncImagePainter
-import coil.request.ImageRequest
 import com.nullpointer.moviescompose.R
 import com.nullpointer.moviescompose.core.utils.convertTime
 import com.nullpointer.moviescompose.models.MovieDB
+import com.nullpointer.moviescompose.ui.share.AsyncImageFade
 
 @Composable
 fun HeaderMovie(
@@ -36,78 +35,56 @@ fun HeaderMovie(
     modifier: Modifier = Modifier,
     colorBackground: Color = MaterialTheme.colors.primary
 ) {
-
-    Surface(
-        color = colorBackground,
-        contentColor = Color.White
+    Box(
+        modifier = modifier
+            .background(colorBackground)
+            .fillMaxWidth()
+            .height(310.dp)
     ) {
-        val painterMovie = rememberAsyncImagePainter(
-            model = ImageRequest
-                .Builder(LocalContext.current)
-                .crossfade(true)
-                .data(movie.imgMovie)
-                .build(),
-            placeholder = painterResource(id = R.drawable.ic_movies),
-            error = painterResource(id = R.drawable.ic_broken_image)
-        )
-        val painterPoster = rememberAsyncImagePainter(
-            model = ImageRequest
-                .Builder(LocalContext.current)
-                .crossfade(true)
-                .data(movie.imgCover)
-                .build(),
-            placeholder = painterResource(id = R.drawable.ic_movies),
-            error = painterResource(id = R.drawable.ic_broken_image)
+        AsyncImageFade(
+            data = movie.imgCover,
+            contentDescription = R.string.description_background_img,
+            resourceLoading = R.drawable.ic_movies,
+            resourceFailed = R.drawable.ic_broken_image,
+            modifier = Modifier
+                .alpha(alphaBackground)
+                .fillMaxSize()
         )
 
         Box(
-            modifier = modifier
-                .background(colorBackground)
-                .fillMaxWidth()
-                .height(310.dp)
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black.copy(alpha = .2f))
+        )
+
+        Card(
+            shape = RoundedCornerShape(10.dp),
+            modifier = Modifier
+                .padding(16.dp)
+                .align(Alignment.BottomStart)
         ) {
-            Image(
+            AsyncImageFade(
+                data = movie.imgMovie,
+                contentDescription = R.string.description_img_movie,
+                resourceLoading = R.drawable.ic_movies,
+                resourceFailed = R.drawable.ic_broken_image,
                 modifier = Modifier
-                    .alpha(alphaBackground)
-                    .fillMaxSize(),
-                painter = painterPoster,
-                contentDescription = stringResource(R.string.description_background_img),
-                contentScale = if (painterPoster.state is AsyncImagePainter.State.Success) ContentScale.Crop else ContentScale.Fit
+                    .width(120.dp)
+                    .height(150.dp)
             )
+        }
 
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color.Black.copy(alpha = .3f))
-            )
-
-            Card(
-                shape = RoundedCornerShape(10.dp),
-                modifier = Modifier
-                    .padding(16.dp)
-                    .align(Alignment.BottomStart)
-            ) {
-                Image(
-                    modifier = Modifier
-                        .width(120.dp)
-                        .height(150.dp),
-                    painter = painterMovie,
-                    contentDescription = stringResource(id = R.string.description_img_movie),
-                    contentScale = if (painterPoster.state is AsyncImagePainter.State.Success) ContentScale.Crop else ContentScale.Fit
-                )
-            }
-
-            InfoCardMovie(
-                movieDB = movie, modifier = Modifier
-                    .padding(paddingHeader.dp)
-                    .align(Alignment.BottomEnd)
-                    .clip(MaterialTheme.shapes.small)
-                    .background(Color.Gray.copy(alpha = 0.3f))
-                    .width(150.dp)
-            )
+        InfoCardMovie(
+            movieDB = movie, modifier = Modifier
+                .padding(paddingHeader.dp)
+                .align(Alignment.BottomEnd)
+                .clip(MaterialTheme.shapes.small)
+                .background(Color.Gray.copy(alpha = 0.3f))
+                .width(150.dp)
+        )
 
         }
-    }
+
 }
 
 @Composable
