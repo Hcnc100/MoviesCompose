@@ -22,7 +22,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImagePainter
@@ -46,14 +45,6 @@ import me.onebone.toolbar.CollapsingToolbarScaffold
 import me.onebone.toolbar.ScrollStrategy
 
 
-private val sizeMinTitle = 18
-private val sizeMaxTitle = 24
-private val finalPaddingIconNav = 48
-private val finalInnerPadding = 16
-private val topPaddingTitleExpanded = 20
-private val finalHeightMinToolbar = 48
-
-
 @Destination
 @Composable
 fun DetailsMovieScreen(
@@ -64,6 +55,11 @@ fun DetailsMovieScreen(
 ) {
 
     val stateListCast by castViewModel.listCastMovie.collectAsState()
+    val maxTextLinesTitle by remember(detailsStateScreen.progressCollapsing) {
+        derivedStateOf {
+            if (detailsStateScreen.progressCollapsing < 0.8f) 1 else Int.MAX_VALUE
+        }
+    }
 
     LaunchedEffect(key1 = Unit) {
         castViewModel.messageCast.collect(detailsStateScreen::showSnackMessage)
@@ -79,40 +75,29 @@ fun DetailsMovieScreen(
             state = detailsStateScreen.toolbarState,
             scrollStrategy = ScrollStrategy.ExitUntilCollapsed,
             toolbar = {
-                val textSizeTitle =
-                    (sizeMinTitle + (sizeMaxTitle - sizeMinTitle) * detailsStateScreen.progressCollapsing)
-                val paddingTopTitle =
-                    ((finalPaddingIconNav + topPaddingTitleExpanded) * detailsStateScreen.progressCollapsing)
-                val paddingStartTitle =
-                    (finalInnerPadding + ((finalPaddingIconNav - finalInnerPadding) * (1 - detailsStateScreen.progressCollapsing)))
-                val maxTextLinesTitle by remember(detailsStateScreen.progressCollapsing) {
-                    derivedStateOf {
-                        if (detailsStateScreen.progressCollapsing < 0.8f) 1 else Int.MAX_VALUE
-                    }
-                }
-
                 HeaderMovie(
                     movie = movie,
                     modifier = Modifier.parallax(),
+                    paddingHeader = detailsStateScreen.innerPadding,
                     alphaBackground = detailsStateScreen.progressCollapsing
                 )
 
                 IconBack(
                     actionClickBack = navigator::popBackStack,
-                    modifier = Modifier
-                        .size(finalPaddingIconNav.dp)
+                    modifier = Modifier.size(detailsStateScreen.paddingIconNav.dp)
                 )
 
                 TitleRoad(
                     title = movie.title,
-                    fontSize = textSizeTitle.sp,
                     maxLinesTitle = maxTextLinesTitle,
+                    fontSize = detailsStateScreen.textSizeTitle,
+                    heightMinToolbar = detailsStateScreen.heightMinToolbar,
                     modifier = Modifier
                         .road(Alignment.TopStart, Alignment.TopCenter)
                         .padding(
-                            start = paddingStartTitle.dp,
-                            end = finalInnerPadding.dp,
-                            top = paddingTopTitle.dp,
+                            start = detailsStateScreen.paddingStartTitle.dp,
+                            end = detailsStateScreen.innerPadding.dp,
+                            top = detailsStateScreen.paddingTopTitle.dp,
                         )
                 )
             }) {
@@ -239,9 +224,10 @@ private fun InfoCardMovie(
 @Composable
 private fun HeaderMovie(
     movie: MovieDB,
+    paddingHeader: Float,
     alphaBackground: Float,
     modifier: Modifier = Modifier,
-    colorBackground: Color = MaterialTheme.colors.primary
+    colorBackground: Color = MaterialTheme.colors.primary,
 ) {
     val painterMovie = rememberAsyncImagePainter(
         model = ImageRequest
@@ -301,7 +287,7 @@ private fun HeaderMovie(
 
         InfoCardMovie(
             movieDB = movie, modifier = Modifier
-                .padding(finalInnerPadding.dp)
+                .padding(paddingHeader.dp)
                 .align(Alignment.BottomEnd)
                 .clip(MaterialTheme.shapes.small)
                 .background(Color.Gray.copy(alpha = 0.3f))
@@ -315,21 +301,21 @@ private fun HeaderMovie(
 fun TitleRoad(
     title: String,
     maxLinesTitle: Int,
-    fontSize: TextUnit,
+    fontSize: Float,
+    heightMinToolbar: Float,
     modifier: Modifier = Modifier,
 ) {
-
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .heightIn(finalHeightMinToolbar.dp),
+            .heightIn(heightMinToolbar.dp),
         verticalArrangement = Arrangement.Center
     ) {
         Text(
             text = title,
             modifier = Modifier,
             color = Color.White,
-            fontSize = fontSize,
+            fontSize = fontSize.sp,
             maxLines = maxLinesTitle,
             overflow = TextOverflow.Ellipsis
         )
