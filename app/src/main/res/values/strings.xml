@@ -27,7 +27,7 @@
     <string name="title_casting" translatable="false">Casting</string>
     <string name="description_background_img">Imagen de portada de la película</string>
     <string name="description_value">Icono de valoración</string>
-    <string name="sub_title_value">Valoración</string>
+    <string name="sub_title_value">Valoración %d %</string>
     <string name="description_clock_icon">Icono del tiempo de lanzamiento de la película</string>
     <string name="sub_title_time_movie">Desconocido</string>
 

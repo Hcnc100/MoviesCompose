@@ -13,6 +13,8 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -20,7 +22,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
@@ -34,11 +38,21 @@ import com.nullpointer.moviescompose.presentation.CastViewModel
 import com.nullpointer.moviescompose.ui.screens.details.componets.ItemCast
 import com.nullpointer.moviescompose.ui.screens.movies.components.CardContainerFake
 import com.nullpointer.moviescompose.ui.screens.movies.components.TitleFakeMovie
-import com.nullpointer.moviescompose.ui.share.ToolbarBack
-import com.nullpointer.moviescompose.ui.states.SimpleScreenState
-import com.nullpointer.moviescompose.ui.states.rememberSimpleScreenState
+import com.nullpointer.moviescompose.ui.states.DetailsScreenState
+import com.nullpointer.moviescompose.ui.states.rememberDetailsScreenState
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import me.onebone.toolbar.CollapsingToolbarScaffold
+import me.onebone.toolbar.ScrollStrategy
+
+
+private val sizeMinTitle = 18
+private val sizeMaxTitle = 24
+private val finalPaddingIconNav = 48
+private val finalInnerPadding = 16
+private val topPaddingTitleExpanded = 20
+private val finalHeightMinToolbar = 48
+
 
 @Destination
 @Composable
@@ -46,33 +60,75 @@ fun DetailsMovieScreen(
     movie: MovieDB,
     navigator: DestinationsNavigator,
     castViewModel: CastViewModel = shareViewModel(),
-    detailsStateScreen: SimpleScreenState = rememberSimpleScreenState()
+    detailsStateScreen: DetailsScreenState = rememberDetailsScreenState()
 ) {
+
     val stateListCast by castViewModel.listCastMovie.collectAsState()
 
     LaunchedEffect(key1 = Unit) {
         castViewModel.messageCast.collect(detailsStateScreen::showSnackMessage)
     }
+
     Scaffold(
-        scaffoldState = detailsStateScreen.scaffoldState,
-        topBar = {
-            ToolbarBack(
-                title = stringResource(id = R.string.title_details_movie),
-                actionBack = navigator::popBackStack
-            )
-        }
-    ) { padding ->
-        Column(
+        scaffoldState = detailsStateScreen.scaffoldState
+    ) {
+        CollapsingToolbarScaffold(
             modifier = Modifier
-                .padding(padding)
-                .verticalScroll(rememberScrollState())
-        ) {
-            HeaderMovie(movie = movie)
-            ReviewMovie(movie = movie)
-            ListCastState(listCast = stateListCast)
+                .fillMaxWidth()
+                .padding(it),
+            state = detailsStateScreen.toolbarState,
+            scrollStrategy = ScrollStrategy.ExitUntilCollapsed,
+            toolbar = {
+                val textSizeTitle =
+                    (sizeMinTitle + (sizeMaxTitle - sizeMinTitle) * detailsStateScreen.progressCollapsing)
+                val paddingTopTitle =
+                    ((finalPaddingIconNav + topPaddingTitleExpanded) * detailsStateScreen.progressCollapsing)
+                val paddingStartTitle =
+                    (finalInnerPadding + ((finalPaddingIconNav - finalInnerPadding) * (1 - detailsStateScreen.progressCollapsing)))
+                val maxTextLinesTitle by remember(detailsStateScreen.progressCollapsing) {
+                    derivedStateOf {
+                        if (detailsStateScreen.progressCollapsing < 0.8f) 1 else Int.MAX_VALUE
+                    }
+                }
+
+                HeaderMovie(
+                    movie = movie,
+                    modifier = Modifier.parallax(),
+                    alphaBackground = detailsStateScreen.progressCollapsing
+                )
+
+                IconBack(
+                    actionClickBack = navigator::popBackStack,
+                    modifier = Modifier
+                        .size(finalPaddingIconNav.dp)
+                )
+
+                TitleRoad(
+                    title = movie.title,
+                    fontSize = textSizeTitle.sp,
+                    maxLinesTitle = maxTextLinesTitle,
+                    modifier = Modifier
+                        .road(Alignment.TopStart, Alignment.TopCenter)
+                        .padding(
+                            start = paddingStartTitle.dp,
+                            end = finalInnerPadding.dp,
+                            top = paddingTopTitle.dp,
+                        )
+                )
+            }) {
+
+            Column(
+                modifier = Modifier
+                    .verticalScroll(rememberScrollState())
+            ) {
+                ReviewMovie(movie = movie)
+                ListCastState(listCast = stateListCast)
+            }
+
         }
     }
 }
+
 
 @Composable
 private fun ReviewMovie(movie: MovieDB) {
@@ -119,9 +175,74 @@ private fun ListCastState(
     }
 }
 
+
+@Composable
+private fun InfoCardMovie(
+    movieDB: MovieDB,
+    modifier: Modifier = Modifier,
+    context: Context = LocalContext.current
+) {
+
+    val dateMovie = remember {
+        movieDB.releaseDate?.convertTime() ?: context.getString(R.string.sub_title_time_movie)
+    }
+    val voteAverage = remember {
+        "${(movieDB.voteAverage * 10).toInt()}"
+    }
+
+
+    Column(
+        modifier = modifier.padding(10.dp),
+        verticalArrangement = Arrangement.Center
+    ) {
+        Text(
+            text = movieDB.originalTitle,
+            overflow = TextOverflow.Ellipsis,
+            style = MaterialTheme.typography.body1.copy(
+                fontWeight = FontWeight.W500,
+                color = Color.White,
+                fontSize = 14.sp
+            ),
+        )
+        Spacer(modifier = Modifier.height(10.dp))
+        Row {
+            Icon(
+                tint = Color.White,
+                modifier = Modifier.size(20.dp),
+                painter = painterResource(id = R.drawable.ic_start),
+                contentDescription = stringResource(R.string.description_value)
+            )
+            Spacer(modifier = Modifier.width(5.dp))
+            Text(
+                color = Color.White,
+                style = MaterialTheme.typography.caption,
+                text = stringResource(R.string.sub_title_value, voteAverage),
+                modifier = Modifier.align(Alignment.CenterVertically)
+            )
+        }
+        Spacer(modifier = Modifier.height(10.dp))
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_time),
+                contentDescription = stringResource(R.string.description_clock_icon),
+                tint = Color.White, modifier = Modifier.size(20.dp)
+            )
+            Spacer(modifier = Modifier.width(5.dp))
+            Text(
+                text = dateMovie,
+                color = Color.White,
+                style = MaterialTheme.typography.caption
+            )
+        }
+    }
+}
+
 @Composable
 private fun HeaderMovie(
     movie: MovieDB,
+    alphaBackground: Float,
+    modifier: Modifier = Modifier,
+    colorBackground: Color = MaterialTheme.colors.primary
 ) {
     val painterMovie = rememberAsyncImagePainter(
         model = ImageRequest
@@ -143,115 +264,91 @@ private fun HeaderMovie(
     )
 
     Box(
-        modifier = Modifier
+        modifier = modifier
+            .background(colorBackground)
             .fillMaxWidth()
-            .height(250.dp)
+            .height(310.dp)
     ) {
         Image(
+            modifier = Modifier
+                .alpha(alphaBackground)
+                .fillMaxSize(),
             painter = painterPoster,
             contentDescription = stringResource(R.string.description_background_img),
-            modifier = Modifier.fillMaxSize(),
             contentScale = if (painterPoster.state is AsyncImagePainter.State.Success) ContentScale.Crop else ContentScale.Fit
         )
+
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .background(Color.Black.copy(alpha = .3f))
         )
 
-        Row(
-            horizontalArrangement = Arrangement.SpaceBetween,
+        Card(
+            shape = RoundedCornerShape(10.dp),
             modifier = Modifier
-                .padding(10.dp)
-                .fillMaxWidth()
-                .height(150.dp)
-                .align(Alignment.BottomCenter),
+                .padding(16.dp)
+                .align(Alignment.BottomStart)
         ) {
-            Card(
+            Image(
                 modifier = Modifier
-                    .fillMaxHeight()
-                    .width(100.dp),
-                shape = RoundedCornerShape(10.dp)
-            ) {
-                Image(
-                    painter = painterMovie,
-                    contentDescription = stringResource(id = R.string.description_img_movie),
-                    contentScale = if (painterPoster.state is AsyncImagePainter.State.Success) ContentScale.Crop else ContentScale.Fit,
-                    modifier = Modifier.fillMaxSize()
-                )
-            }
-            InfoCardMovie(
-                movieDB = movie,
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .width(150.dp)
+                    .width(120.dp)
+                    .height(150.dp),
+                painter = painterMovie,
+                contentDescription = stringResource(id = R.string.description_img_movie),
+                contentScale = if (painterPoster.state is AsyncImagePainter.State.Success) ContentScale.Crop else ContentScale.Fit
             )
         }
+
+        InfoCardMovie(
+            movieDB = movie, modifier = Modifier
+                .padding(finalInnerPadding.dp)
+                .align(Alignment.BottomEnd)
+                .clip(MaterialTheme.shapes.small)
+                .background(Color.Gray.copy(alpha = 0.3f))
+                .width(150.dp)
+        )
+
     }
 }
 
 @Composable
-private fun InfoCardMovie(
-    movieDB: MovieDB,
+fun TitleRoad(
+    title: String,
+    maxLinesTitle: Int,
+    fontSize: TextUnit,
     modifier: Modifier = Modifier,
-    context: Context = LocalContext.current
 ) {
 
-    val dateMovie by remember {
-        derivedStateOf {
-            movieDB.releaseDate?.convertTime() ?: context.getString(R.string.sub_title_time_movie)
-        }
-    }
-    val voteAverage by remember {
-        derivedStateOf {
-            "${(movieDB.voteAverage * 10).toInt()} %"
-        }
-    }
-
-
     Column(
-        modifier = modifier,
+        modifier = modifier
+            .fillMaxWidth()
+            .heightIn(finalHeightMinToolbar.dp),
         verticalArrangement = Arrangement.Center
     ) {
         Text(
-            text = movieDB.title,
-            style = MaterialTheme.typography.h6,
-            maxLines = 2,
-            overflow = TextOverflow.Ellipsis,
-            color = Color.White
+            text = title,
+            modifier = Modifier,
+            color = Color.White,
+            fontSize = fontSize,
+            maxLines = maxLinesTitle,
+            overflow = TextOverflow.Ellipsis
         )
-        Spacer(modifier = Modifier.height(6.dp))
-        Text(
-            text = movieDB.originalTitle,
-            style = MaterialTheme.typography.caption,
-            maxLines = 3,
-            overflow = TextOverflow.Ellipsis,
-            fontWeight = FontWeight.W500,
-            color = Color.White
+    }
+}
+
+@Composable
+private fun IconBack(
+    actionClickBack: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    IconButton(
+        onClick = actionClickBack,
+        modifier = modifier
+    ) {
+        Icon(
+            painter = painterResource(id = R.drawable.ic_arrow_back),
+            contentDescription = null
         )
-        Spacer(modifier = Modifier.height(10.dp))
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_start),
-                contentDescription = stringResource(R.string.description_value),
-                tint = Color.White, modifier = Modifier.size(20.dp)
-            )
-            Spacer(modifier = Modifier.width(5.dp))
-            Text(text = stringResource(R.string.sub_title_value),
-                style = MaterialTheme.typography.caption,
-                color = Color.White)
-            Spacer(modifier = Modifier.width(5.dp))
-            Text(text = voteAverage,
-                style = MaterialTheme.typography.caption, color = Color.White)
-        }
-        Spacer(modifier = Modifier.height(10.dp))
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Icon(painter = painterResource(id = R.drawable.ic_time),
-                contentDescription = stringResource(R.string.description_clock_icon),
-                tint = Color.White, modifier = Modifier.size(20.dp))
-            Spacer(modifier = Modifier.width(5.dp))
-            Text(text = dateMovie,
-                style = MaterialTheme.typography.caption, color = Color.White)
-        }
     }
 }

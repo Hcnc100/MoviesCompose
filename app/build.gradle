@@ -135,4 +135,8 @@ dependencies {
 
     // * swipe
     implementation "com.google.accompanist:accompanist-swiperefresh:0.25.0"
+
+    // toolbar
+    implementation("me.onebone:toolbar-compose:2.3.4")
+
 }

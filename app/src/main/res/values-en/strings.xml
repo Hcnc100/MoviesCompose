@@ -24,7 +24,7 @@
     <string name="title_overview">Overview</string>
     <string name="description_background_img">Movie cover image</string>
     <string name="description_value">Rating icon</string>
-    <string name="sub_title_value">Raiting</string>
+    <string name="sub_title_value">Raiting %s</string>
     <string name="description_clock_icon">Movie release time icon</string>
     <string name="sub_title_time_movie">Unknown</string>
 
