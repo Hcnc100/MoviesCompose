@@ -186,9 +186,7 @@ private fun InfoCardMovie(
     val dateMovie = remember {
         movieDB.releaseDate?.convertTime() ?: context.getString(R.string.sub_title_time_movie)
     }
-    val voteAverage = remember {
-        "${(movieDB.voteAverage * 10).toInt()}"
-    }
+    val voteAverage = remember { (movieDB.voteAverage * 10).toInt() }
 
 
     Column(
@@ -198,6 +196,7 @@ private fun InfoCardMovie(
         Text(
             text = movieDB.originalTitle,
             overflow = TextOverflow.Ellipsis,
+            maxLines = 3,
             style = MaterialTheme.typography.body1.copy(
                 fontWeight = FontWeight.W500,
                 color = Color.White,
