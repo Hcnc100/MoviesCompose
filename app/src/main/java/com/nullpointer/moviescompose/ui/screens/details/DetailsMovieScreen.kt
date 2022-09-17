@@ -217,74 +217,82 @@ private fun HeaderMovie(
     paddingHeader: Float,
     alphaBackground: Float,
     modifier: Modifier = Modifier,
-    colorBackground: Color = MaterialTheme.colors.primary,
+    colorBackground: Color = MaterialTheme.colors.primary
 ) {
-    val painterMovie = rememberAsyncImagePainter(
-        model = ImageRequest
-            .Builder(LocalContext.current)
-            .crossfade(true)
-            .data(movie.imgMovie)
-            .build(),
-        placeholder = painterResource(id = R.drawable.ic_movies),
-        error = painterResource(id = R.drawable.ic_broken_image)
-    )
-    val painterPoster = rememberAsyncImagePainter(
-        model = ImageRequest
-            .Builder(LocalContext.current)
-            .crossfade(true)
-            .data(movie.imgCover)
-            .build(),
-        placeholder = painterResource(id = R.drawable.ic_movies),
-        error = painterResource(id = R.drawable.ic_broken_image)
-    )
 
-    Box(
-        modifier = modifier
-            .background(colorBackground)
-            .fillMaxWidth()
-            .height(310.dp)
+    Surface(
+        color = colorBackground,
+        contentColor = Color.White
     ) {
-        Image(
-            modifier = Modifier
-                .alpha(alphaBackground)
-                .fillMaxSize(),
-            painter = painterPoster,
-            contentDescription = stringResource(R.string.description_background_img),
-            contentScale = if (painterPoster.state is AsyncImagePainter.State.Success) ContentScale.Crop else ContentScale.Fit
+        val painterMovie = rememberAsyncImagePainter(
+            model = ImageRequest
+                .Builder(LocalContext.current)
+                .crossfade(true)
+                .data(movie.imgMovie)
+                .build(),
+            placeholder = painterResource(id = R.drawable.ic_movies),
+            error = painterResource(id = R.drawable.ic_broken_image)
+        )
+        val painterPoster = rememberAsyncImagePainter(
+            model = ImageRequest
+                .Builder(LocalContext.current)
+                .crossfade(true)
+                .data(movie.imgCover)
+                .build(),
+            placeholder = painterResource(id = R.drawable.ic_movies),
+            error = painterResource(id = R.drawable.ic_broken_image)
         )
 
         Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color.Black.copy(alpha = .3f))
-        )
-
-        Card(
-            shape = RoundedCornerShape(10.dp),
-            modifier = Modifier
-                .padding(16.dp)
-                .align(Alignment.BottomStart)
+            modifier = modifier
+                .background(colorBackground)
+                .fillMaxWidth()
+                .height(310.dp)
         ) {
             Image(
                 modifier = Modifier
-                    .width(120.dp)
-                    .height(150.dp),
-                painter = painterMovie,
-                contentDescription = stringResource(id = R.string.description_img_movie),
+                    .alpha(alphaBackground)
+                    .fillMaxSize(),
+                painter = painterPoster,
+                contentDescription = stringResource(R.string.description_background_img),
                 contentScale = if (painterPoster.state is AsyncImagePainter.State.Success) ContentScale.Crop else ContentScale.Fit
             )
+
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Black.copy(alpha = .3f))
+            )
+
+            Card(
+                shape = RoundedCornerShape(10.dp),
+                modifier = Modifier
+                    .padding(16.dp)
+                    .align(Alignment.BottomStart)
+            ) {
+                Image(
+                    modifier = Modifier
+                        .width(120.dp)
+                        .height(150.dp),
+                    painter = painterMovie,
+                    contentDescription = stringResource(id = R.string.description_img_movie),
+                    contentScale = if (painterPoster.state is AsyncImagePainter.State.Success) ContentScale.Crop else ContentScale.Fit
+                )
+            }
+
+            InfoCardMovie(
+                movieDB = movie, modifier = Modifier
+                    .padding(paddingHeader.dp)
+                    .align(Alignment.BottomEnd)
+                    .clip(MaterialTheme.shapes.small)
+                    .background(Color.Gray.copy(alpha = 0.3f))
+                    .width(150.dp)
+            )
+
         }
-
-        InfoCardMovie(
-            movieDB = movie, modifier = Modifier
-                .padding(paddingHeader.dp)
-                .align(Alignment.BottomEnd)
-                .clip(MaterialTheme.shapes.small)
-                .background(Color.Gray.copy(alpha = 0.3f))
-                .width(150.dp)
-        )
-
     }
+
+
 }
 
 @Composable
@@ -323,7 +331,8 @@ private fun IconBack(
     ) {
         Icon(
             painter = painterResource(id = R.drawable.ic_arrow_back),
-            contentDescription = null
+            contentDescription = null,
+            tint = Color.White,
         )
     }
 }

@@ -17,23 +17,27 @@ fun ToolbarBack(
 ) {
     if (actionBack != null) {
         TopAppBar(title = { Text(title) },
-            backgroundColor = MaterialTheme.colors.primaryVariant,
+            backgroundColor = MaterialTheme.colors.primary,
             contentColor = Color.White,
             navigationIcon = {
                 IconButton(onClick = actionBack) {
-                    Icon(painterResource(id = iconNavigation),
-                        stringResource(id = R.string.description_arrow_back))
+                    Icon(
+                        painterResource(id = iconNavigation),
+                        stringResource(id = R.string.description_arrow_back)
+                    )
                 }
 
             })
     } else {
         TopAppBar(title = { Text(title) },
-            backgroundColor = MaterialTheme.colors.primaryVariant,
-            contentColor = Color.White,actions = {
+            backgroundColor = MaterialTheme.colors.primary,
+            contentColor = Color.White, actions = {
                 if (actionSearch != null) {
                     IconButton(onClick = actionSearch) {
-                        Icon(painterResource(R.drawable.ic_search),
-                            stringResource(id = R.string.description_search))
+                        Icon(
+                            painterResource(R.drawable.ic_search),
+                            stringResource(id = R.string.description_search)
+                        )
                     }
                 }
             })
